@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["demeter"]
+}
+
+// ----------------------------------------------------------------
+// Autenticação e perfis
+// ----------------------------------------------------------------
+
+enum Profile {
+  PRODUTOR
+  TECNICO
+  GESTOR
+  @@schema("demeter")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String
+  name            String
+  profile         Profile
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  // Só preenchido quando profile = PRODUTOR — um produtor pertence
+
+  localId    String?
+  local      Local? @relation("ProdutorMunicipio", fields: [localId], references: [id])
+
+  // Só populado quando profile = TECNICO — vira o array
+  // `allowedLocals` assinado no JWT.
+  allowedLocals localUser[]
+
+  @@index([profile])
+  @@schema("demeter")
+}
+
+// Junção N:N entre técnico e municípios que ele tem permissão de ver.
+// É essa tabela que o graficoProxy.ts consulta (via req.usuario)
+
+model localUser {
+  userId   String
+  localId String
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  local   Local  @relation(fields: [localId], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+
+  @@id([userId, localId])
+  @@schema("demeter")
+}
+
+// ----------------------------------------------------------------
+// Referência mínima ao Municipio
+// ----------------------------------------------------------------
+
+model Local {
+  id         String @id @default(cuid())
+  IBGE_id    String @unique
+  name       String
+  uf         String @default("CE")
+
+  producers    User[]       @relation("ProdutorMunicipio")
+  technicians  localUser[]
+  @@schema("demeter")
+}
