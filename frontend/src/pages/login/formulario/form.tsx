@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { Mail, Lock, Eye, ArrowRight, Globe, Building2, Tractor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ThemeToggle } from "@/components/theme-toglle";
+// import { ThemeToggle } from "@/components/theme-toglle";
+import Image from "next/image";
 
 export default function LoginForm() {
   const messages = [
-    "Monitore dados climáticos em tempo real.",
-    "Acompanhe indicadores agrícolas de todas as regiões.",
-    "Visualize mapas, gráficos e estatísticas.",
-    "Transforme dados em decisões inteligentes.",
-    "Bem-vindo ao Chuva e Safra.",
+    "Monitore dados climáticos em tempo real",
+    "Acompanhe indicadores agrícolas da sua região",
+    "Visualize mapas, gráficos e estatísticas",
+    "Transforme dados em decisões inteligentes",
+    "Bem-vindo a Deméter",
   ];
 
   const [currentMessage, setCurrentMessage] = useState(0);
@@ -23,15 +24,18 @@ export default function LoginForm() {
     }, 3500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [messages.length]);
   return (
     <div className="flex h-screen">
-      <div className="dark:text-black absolute flex items-center justify-center w-10 h-10 ml-16 mt-10 rounded-md bg-[#10B981] z-50">
+      <div className="dark:text-black text-white absolute flex items-center justify-center w-10 h-10 ml-16 mt-10 rounded-md bg-[#10B981] z-50">
         <Tractor />
       </div>
       {/* Imagem do lado esquerdo da tela */}
       <div className="relative w-1/2 overflow-hidden">
-        <img
+        <Image
+          width={1080}
+          height={1080}
+          loading="eager"
           src="https://images.pexels.com/photos/13860040/pexels-photo-13860040.jpeg"
           alt="Login"
           className="h-full w-full object-cover"
@@ -75,7 +79,7 @@ export default function LoginForm() {
 
       {/* Formulário */}
       <div className="flex w-1/2 items-center justify-center bg-[#0B120F] px-8">
-        <div className="w-full max-w-[550px]">
+        <div className="w-full max-w-137.5">
           <h1 className="text-3xl font-bold text-white">Seja bem-vindo</h1>
 
           <p className="mt-3 text-sm leading-6 text-zinc-400">
@@ -90,7 +94,7 @@ export default function LoginForm() {
               </label>
 
               <div className="group relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500 transition-colors duration-200 group-focus-within:text-emerald-500" />
+                <Mail className="absolute left-3 top-6 h-4 w-4 -translate-y-1/2 text-zinc-500 transition-colors duration-200 group-focus-within:text-emerald-500" />
 
                 <Input
                   type="email"
