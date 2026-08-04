@@ -38,20 +38,20 @@ export class UserRepository {
   }
 
   async create(data: CreateUserData) {
+    const isTecnico = data.profile === Profile.TECNICO;
+    const isProdutor = data.profile === Profile.PRODUTOR;
     return prisma.user.create({
       data: {
         email: data.email,
         name: data.name,
         passwordHash: data.passwordHash,
         profile: data.profile,
-        localId: data.profile === Profile.PRODUTOR ? data.localId : null,
+        localId: isProdutor ? data.localId : null,
         allowedLocals:
-          data.profile === Profile.TECNICO && data.allowedLocals && data.allowedLocals.length > 0
+          isTecnico && data.allowedLocals && data.allowedLocals.length > 0
             ? {
-                create: data.allowedLocals.map((localId) => ({
-                  local: { connect: { id: localId } },
-                })),
-              }
+              create: data.allowedLocals.map((localId) => ({ localId })),
+            }
             : undefined,
       },
       include: {
