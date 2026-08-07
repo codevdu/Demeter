@@ -33,6 +33,7 @@ export default function ProdutorDashboard() {
                 </p>
             </div>
 
+
             {/* Cards */}
 
             <div 
@@ -90,6 +91,56 @@ export default function ProdutorDashboard() {
                         </p>
                     </CardContent>
                 </Card>
+            </div>
+
+
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
+
+                {/* Card do gráfico */}
+
+                <Card className="xl:col-span-2 bg-[#121214] border-zinc-800">
+
+                    <CardHeader>
+                        <CardTitle>
+                            Produtividade x Chuva
+                        </CardTitle>
+                    </CardHeader>
+
+                    <CardContent>
+
+                        <div className="h-[350px] rounded-lg border-2 border-dashed border-zinc-700 flex items-center justify-center text-zinc-500">
+
+                            Área do gráfico
+
+                        </div>
+
+                    </CardContent>
+
+                </Card>
+
+
+                {/* Card do solo */}
+
+                <Card className="bg-[#121214] border-zinc-800">
+
+                    <CardHeader>
+                        <CardTitle>
+                            Composição do Solo
+                        </CardTitle>
+                    </CardHeader>
+
+                    <CardContent>
+
+                        <div className="h-[350px] rounded-lg border-2 border-dashed border-zinc-700 flex items-center justify-center text-zinc-500">
+
+                            Área do solo
+
+                        </div>
+
+                    </CardContent>
+
+                </Card>
+
             </div>
 
         </main>
