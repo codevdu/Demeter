@@ -8,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ChartSection } from "@/components/produtor/ChartSection";
+import { TimelineSection } from "@/components/produtor/TimelineSection";
 
 export default function ProdutorDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -98,61 +100,7 @@ export default function ProdutorDashboard() {
 
                 {/* Card do gráfico */}
 
-                <Card className="xl:col-span-2 bg-[#121214] border-zinc-800">
-
-                    <CardHeader>
-
-                        <div className="flex justify-between items-start">
-
-                            <div>
-
-                                <CardTitle className="text-xl">
-                                    Produtividade x Chuva
-                                </CardTitle>
-
-                                <p className="text-sm text-zinc-400 mt-1">
-                                    Performance durante a safra 2023/24
-                                </p>
-
-                            </div>
-
-                            <div className="flex gap-2">
-
-                                <select className="bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm">
-
-                                    <option>Milho</option>
-
-                                </select>
-
-                                <button className="bg-emerald-500 text-black px-3 rounded-md">
-                                    30D
-                                </button>
-
-                                <button className="bg-zinc-900 px-3 rounded-md">
-                                    6M
-                                </button>
-
-                                <button className="bg-zinc-900 px-3 rounded-md">
-                                    1Y
-                                </button>
-
-                            </div>
-
-                    </div>
-
-                    </CardHeader>
-
-                    <CardContent>
-
-                        <div className="h-[350px] rounded-lg border-2 border-dashed border-zinc-700 flex items-center justify-center text-zinc-500">
-
-                            Área do gráfico
-
-                        </div>
-
-                    </CardContent>
-
-                </Card>
+                <ChartSection />
 
 
                 {/* Card do solo */}
@@ -178,6 +126,8 @@ export default function ProdutorDashboard() {
                 </Card>
 
             </div>
+
+            <TimelineSection />
 
         </main>
       </div>
