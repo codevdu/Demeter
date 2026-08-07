@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { ChartSection } from "@/components/produtor/ChartSection";
 import { TimelineSection } from "@/components/produtor/TimelineSection";
+import { SoilSection } from "@/components/produtor/SoilSection";
 
 export default function ProdutorDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -105,26 +106,8 @@ export default function ProdutorDashboard() {
 
                 {/* Card do solo */}
 
-                <Card className="bg-[#121214] border-zinc-800">
-
-                    <CardHeader>
-                        <CardTitle>
-                            Composição do Solo
-                        </CardTitle>
-                    </CardHeader>
-
-                    <CardContent>
-
-                        <div className="h-[350px] rounded-lg border-2 border-dashed border-zinc-700 flex items-center justify-center text-zinc-500">
-
-                            Área do solo
-
-                        </div>
-
-                    </CardContent>
-
-                </Card>
-
+                <SoilSection />
+                
             </div>
 
             <TimelineSection />
