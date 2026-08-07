@@ -13,8 +13,20 @@ export function ChartSection() {
       </CardHeader>
 
       <CardContent>
-        <div className="h-[350px] border-2 border-dashed border-zinc-700 rounded-lg flex items-center justify-center text-zinc-500">
-          Área do gráfico
+        <div className="relative h-[350px] rounded-lg bg-[#0f0f10] overflow-hidden">
+
+            {/* linhas horizontais */}
+
+            <div className="absolute inset-0 flex flex-col justify-between p-6">
+
+                <div className="border-b border-zinc-800"></div>
+                <div className="border-b border-zinc-800"></div>
+                <div className="border-b border-zinc-800"></div>
+                <div className="border-b border-zinc-800"></div>
+                <div className="border-b border-zinc-800"></div>
+
+            </div>
+
         </div>
       </CardContent>
     </Card>
