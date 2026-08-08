@@ -11,6 +11,7 @@ import {
 import { ChartSection } from "@/components/produtor/ChartSection";
 import { TimelineSection } from "@/components/produtor/TimelineSection";
 import { SoilSection } from "@/components/produtor/SoilSection";
+import { WeatherSection } from "@/components/produtor/WeatherSection";
 
 export default function ProdutorDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
