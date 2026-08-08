@@ -27,6 +27,14 @@ export function ChartSection() {
 
             </div>
 
+            {/* eixo Y */}
+
+            <div className="absolute left-10 top-6 bottom-10 w-px bg-zinc-700"></div>
+
+            {/* eixo X */}
+
+            <div className="absolute left-10 right-6 bottom-10 h-px bg-zinc-700"></div>
+
         </div>
       </CardContent>
     </Card>
