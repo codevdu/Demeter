@@ -9,9 +9,15 @@ export function TimelineSection() {
   return (
     <Card className="bg-[#121214] border-zinc-800 h-full">
       <CardHeader>
-        <CardTitle className="text-lg">
-          Timeline da Safra
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg">
+            Timeline da Safra
+          </CardTitle>
+
+          <button className="text-sm text-emerald-400 hover:text-emerald-300">
+            Detalhes
+          </button>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
