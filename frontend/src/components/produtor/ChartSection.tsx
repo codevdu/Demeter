@@ -88,6 +88,37 @@ export function ChartSection() {
               <span>Jun</span>
             </div>
 
+            {/* Linha do gráfico */}
+
+            <svg
+              className="absolute inset-0 w-full h-full"
+              viewBox="0 0 800 350"
+              preserveAspectRatio="none"
+            >
+              <polyline
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="3"
+                points="
+                  60,270
+                  170,230
+                  280,245
+                  390,170
+                  500,190
+                  610,120
+                  720,90
+                "
+              />
+
+              <circle cx="60" cy="270" r="4" fill="#10b981" />
+              <circle cx="170" cy="230" r="4" fill="#10b981" />
+              <circle cx="280" cy="245" r="4" fill="#10b981" />
+              <circle cx="390" cy="170" r="4" fill="#10b981" />
+              <circle cx="500" cy="190" r="4" fill="#10b981" />
+              <circle cx="610" cy="120" r="4" fill="#10b981" />
+              <circle cx="720" cy="90" r="4" fill="#10b981" />
+            </svg>
+
         </div>
       </CardContent>
     </Card>
