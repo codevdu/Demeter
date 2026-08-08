@@ -41,7 +41,7 @@ export function WeatherSection() {
 
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-8 mt-8">
           <div className="flex items-start gap-3">
             <Wind className="mt-1 text-cyan-400" size={18} />
 
@@ -96,6 +96,42 @@ export function WeatherSection() {
                 5%
               </p>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-8 border-t border-zinc-800 pt-5">
+          <div className="grid grid-cols-5 text-center text-xs text-zinc-400">
+
+            <div>
+              <p>SEG</p>
+              <p className="mt-2 text-yellow-400">☀</p>
+              <p className="mt-1">34°</p>
+            </div>
+
+            <div>
+              <p>TER</p>
+              <p className="mt-2 text-yellow-400">☀</p>
+              <p className="mt-1">35°</p>
+            </div>
+
+            <div>
+              <p>QUA</p>
+              <p className="mt-2 text-blue-400">☁</p>
+              <p className="mt-1">31°</p>
+            </div>
+
+            <div>
+              <p>QUI</p>
+              <p className="mt-2 text-yellow-400">☀</p>
+              <p className="mt-1">28°</p>
+            </div>
+
+            <div>
+              <p>SEX</p>
+              <p className="mt-2 text-blue-400">☂</p>
+              <p className="mt-1">27°</p>
+            </div>
+
           </div>
         </div>
       </CardContent>

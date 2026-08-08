@@ -98,7 +98,7 @@ export function ChartSection() {
 
             {/* Meses do eixo X */}
 
-            <div className="absolute left-12 right-6 bottom-2 flex justify-between text-xs text-zinc-500">
+            <div className="absolute left-12 right-6 bottom-4 flex justify-between text-xs text-zinc-500">
               <span>Jan</span>
               <span>Fev</span>
               <span>Mar</span>
@@ -149,6 +149,27 @@ export function ChartSection() {
               <circle cx="750" cy="90" r="4" fill="#8da9e8" />
             </svg>
 
+            {/* Legenda */}
+
+            <div className="absolute left-8 bottom-12 flex gap-6 text-xs">
+
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+
+                <span className="text-zinc-400">
+                  Produtividade (sc/ha)
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#8da9e8]" />
+
+                <span className="text-zinc-400">
+                  Chuva (mm)
+                </span>
+              </div>
+
+            </div>
         </div>
       </CardContent>
     </Card>
