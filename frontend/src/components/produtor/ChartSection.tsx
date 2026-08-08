@@ -47,15 +47,44 @@ export function ChartSection() {
       <CardContent>
         <div className="relative h-[350px] rounded-lg bg-[#0f0f10] overflow-hidden">
 
-            {/* linhas horizontais */}
+            {/* Linhas horizontais + valores do eixo Y */}
 
-            <div className="absolute inset-0 flex flex-col justify-between p-6">
+            <div className="absolute left-0 right-6 top-6 bottom-10 flex flex-col justify-between">
 
-                <div className="border-b border-zinc-800"></div>
-                <div className="border-b border-zinc-800"></div>
-                <div className="border-b border-zinc-800"></div>
-                <div className="border-b border-zinc-800"></div>
-                <div className="border-b border-zinc-800"></div>
+              <div className="flex items-center gap-2">
+                <span className="w-8 text-xs text-zinc-500">
+                  200
+                </span>
+                <div className="h-px flex-1 bg-zinc-800" />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="w-8 text-xs text-zinc-500">
+                  150
+                </span>
+                <div className="h-px flex-1 bg-zinc-800" />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="w-8 text-xs text-zinc-500">
+                  100
+                </span>
+                <div className="h-px flex-1 bg-zinc-800" />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="w-8 text-xs text-zinc-500">
+                  50
+                </span>
+                <div className="h-px flex-1 bg-zinc-800" />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="w-8 text-xs text-zinc-500">
+                  0
+                </span>
+                <div className="h-px flex-1 bg-zinc-800" />
+              </div>
 
             </div>
 
@@ -66,16 +95,6 @@ export function ChartSection() {
             {/* eixo X */}
 
             <div className="absolute left-10 right-6 bottom-10 h-px bg-zinc-700"></div>
-
-            {/* Valores do eixo Y */}
-
-            <div className="absolute left-0 top-4 bottom-12 flex flex-col justify-between text-xs text-zinc-500">
-              <span>200</span>
-              <span>150</span>
-              <span>100</span>
-              <span>50</span>
-              <span>0</span>
-            </div>
 
             {/* Meses do eixo X */}
 
