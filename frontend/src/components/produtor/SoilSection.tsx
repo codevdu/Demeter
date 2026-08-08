@@ -5,70 +5,115 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const RADIUS = 70;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+const GAP = 6;
+
+const composition = [
+  { label: "Argila (Argiloso)", value: 45, color: "#10b981" },
+  { label: "Silte (Siltoso)", value: 35, color: "#cbd5e1" },
+  { label: "Areia (Arenoso)", value: 20, color: "#f59e0b" },
+];
+
 export function SoilSection() {
+
+  /* Deslocamento acumulado de cada fatia do anel */
+
+  let offset = 0;
+
+  const slices = composition.map((item) => {
+    const length = (item.value / 100) * CIRCUMFERENCE;
+    const slice = { ...item, length, start: offset };
+
+    offset += length;
+
+    return slice;
+  });
+
   return (
-    <Card className="bg-[#121214] border-zinc-800 h-fit">
+    <Card className="bg-[#121214] border-zinc-800 h-full">
 
       <CardHeader>
-        <CardTitle className="text-lg">
+        <CardTitle className="text-sm font-semibold uppercase tracking-widest text-zinc-200">
           Composição do Solo
         </CardTitle>
+
+        <p className="text-xs text-zinc-500">
+          Análise do Setor A-24
+        </p>
       </CardHeader>
 
       <CardContent>
 
         <div className="flex flex-col items-center">
 
-          {/* Donut */}
+          {/* Anel */}
 
-          <div
-            className="relative w-44 h-44 rounded-full flex items-center justify-center"
-            style={{
-              background: "conic-gradient(#10b981 0% 82%, #27272a 82% 100%)",
-            }}
-          >
+          <div className="relative mt-4 size-44">
 
-            <div className="absolute w-28 h-28 rounded-full bg-[#121214]" />
+            <svg viewBox="0 0 176 176" className="size-full -rotate-90">
 
-            <span className="relative text-2xl font-bold">
-              82%
-            </span>
+              <circle
+                cx="88"
+                cy="88"
+                r={RADIUS}
+                fill="none"
+                stroke="#27272a"
+                strokeWidth="12"
+              />
+
+              {slices.map((slice) => (
+                <circle
+                  key={slice.label}
+                  cx="88"
+                  cy="88"
+                  r={RADIUS}
+                  fill="none"
+                  stroke={slice.color}
+                  strokeWidth="12"
+                  strokeDasharray={`${slice.length - GAP} ${CIRCUMFERENCE - slice.length + GAP}`}
+                  strokeDashoffset={-slice.start}
+                />
+              ))}
+
+            </svg>
+
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-3xl font-semibold text-zinc-100">
+                88%
+              </span>
+
+              <span className="mt-1 text-[10px] uppercase tracking-widest text-zinc-500">
+                Saudável
+              </span>
+            </div>
 
           </div>
 
           {/* Legenda */}
 
-          <div className="w-full mt-8 space-y-3">
+          <div className="mt-10 w-full space-y-4 text-sm">
 
-            <div className="flex justify-between">
-              <span className="text-zinc-400">
-                Nitrogênio
-              </span>
+            {composition.map((item) => (
+              <div key={item.label} className="flex items-center justify-between">
 
-              <span className="text-emerald-400">
-                Ideal
-              </span>
-            </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
 
-            <div className="flex justify-between">
-              <span className="text-zinc-400">
-                Fósforo
-              </span>
+                  <span className="text-zinc-400">
+                    {item.label}
+                  </span>
+                </div>
 
-              <span className="text-amber-400">
-                Médio
-              </span>
-            </div>
+                <span className="text-zinc-400">
+                  {item.value}%
+                </span>
 
-            <div className="flex justify-between">
-              <span className="text-zinc-400">
-                Potássio
-              </span>
-
-              <span className="text-red-400">
-                Baixo
-              </span>
-            </div>
+              </div>
+            ))}
 
           </div>
 
