@@ -7,7 +7,7 @@ import {
 
 export function SoilSection() {
   return (
-    <Card className="bg-[#121214] border-zinc-800">
+    <Card className="bg-[#121214] border-zinc-800 h-fit">
 
       <CardHeader>
         <CardTitle className="text-lg">
