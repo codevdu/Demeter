@@ -5,9 +5,10 @@ import {
   CloudRain, 
   Tractor, 
   Settings, 
-  HelpCircle, 
-  Activity, 
-  Droplets 
+  CircleHelp,
+  Radio,
+  Droplets,
+  ArrowRight
 } from "lucide-react";
 
 interface SidebarProps {
@@ -56,15 +57,41 @@ export function Sidebar({ isOpen }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="p-4 px-3 flex flex-col gap-4 mb-2">
-        <a href="#" className={`flex items-center ${isOpen ? "justify-start px-3" : "justify-center"} gap-3 text-zinc-500 hover:text-zinc-300 text-xs font-medium`}>
-          <HelpCircle className="size-5 shrink-0" /> 
-          {isOpen && <span>Central de Ajuda</span>}
-        </a>
-        <a href="#" className={`flex items-center ${isOpen ? "justify-start px-3" : "justify-center"} gap-3 text-zinc-500 hover:text-zinc-300 text-xs font-medium`}>
-          <Activity className="size-5 shrink-0" /> 
-          {isOpen && <span>Status do Sistema</span>}
-        </a>
+      <div className="mt-auto">
+        {isOpen && (
+          <div className="mx-3 mb-4 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.06] p-4">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-400">
+              Novo
+            </span>
+
+            <h3 className="mt-2 text-sm font-semibold text-zinc-100">
+              Mapas de Saturação do Solo
+            </h3>
+
+            <p className="mt-1.5 text-xs leading-relaxed text-zinc-500">
+              Monitoramento de umidade de alta precisão para o seu setor norte.
+            </p>
+
+            <a
+              href="#"
+              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-emerald-400 hover:text-emerald-300"
+            >
+              Ver dados
+              <ArrowRight className="size-3" />
+            </a>
+          </div>
+        )}
+
+        <div className="p-4 px-3 flex flex-col gap-4 mb-2 border-t border-zinc-800">
+          <a href="#" className={`flex items-center ${isOpen ? "justify-start px-3" : "justify-center"} gap-3 text-zinc-500 hover:text-zinc-300 text-xs font-medium`}>
+            <CircleHelp className="size-4 shrink-0" />
+            {isOpen && <span>Central de Ajuda</span>}
+          </a>
+          <a href="#" className={`flex items-center ${isOpen ? "justify-start px-3" : "justify-center"} gap-3 text-zinc-500 hover:text-zinc-300 text-xs font-medium`}>
+            <Radio className="size-4 shrink-0" />
+            {isOpen && <span>Status do Sistema</span>}
+          </a>
+        </div>
       </div>
     </aside>
   );
