@@ -5,136 +5,95 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  CloudSun,
-  Wind,
-  Droplets,
   Sun,
   CloudRain,
   Cloud,
+  CloudSun,
 } from "lucide-react";
+
+const metrics = [
+  { label: "Vento", value: "14 km/h NE" },
+  { label: "Umidade", value: "42%" },
+  { label: "Índice UV", value: "Alto (8)" },
+  { label: "Chance de chuva", value: "5%" },
+];
+
+const forecast = [
+  { day: "SEG", Icon: Sun, color: "text-yellow-400", temp: "34°" },
+  { day: "TER", Icon: Sun, color: "text-yellow-400", temp: "35°" },
+  { day: "QUA", Icon: Cloud, color: "text-zinc-400", temp: "31°" },
+  { day: "QUI", Icon: CloudSun, color: "text-amber-400", temp: "28°" },
+  { day: "SEX", Icon: CloudRain, color: "text-blue-400", temp: "27°" },
+];
 
 export function WeatherSection() {
   return (
-    <Card className="bg-[#121214] border-zinc-800">
+    <Card className="bg-[#121214] border-zinc-800 h-full">
+
       <CardHeader>
-        <CardTitle className="text-lg">
-          Condições Climáticas
-        </CardTitle>
+        <div className="flex items-start justify-between gap-4">
+          <CardTitle className="text-lg font-normal text-zinc-200">
+            Pulso Meteorológico
+          </CardTitle>
+
+          <span className="rounded-md bg-amber-500/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-400">
+            Alerta: umidade baixa
+          </span>
+        </div>
       </CardHeader>
 
       <CardContent>
-        <div className="flex items-center justify-between mb-8">
 
-          <div>
-            <p className="text-5xl font-light">
+        <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
+
+          {/* Temperatura atual */}
+
+          <div className="shrink-0">
+            <p className="text-6xl font-light leading-none text-zinc-100">
               32°
             </p>
 
-            <p className="text-zinc-400 mt-2">
+            <p className="mt-3 text-sm text-zinc-400">
               Parcialmente nublado
             </p>
           </div>
 
-          <CloudSun
-            className="text-yellow-400"
-            size={56}
-          />
+          {/* Indicadores */}
+
+          <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-6">
+            {metrics.map((metric) => (
+              <div key={metric.label}>
+                <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                  {metric.label}
+                </p>
+
+                <p className="mt-1.5 text-sm text-zinc-200">
+                  {metric.value}
+                </p>
+              </div>
+            ))}
+          </div>
 
         </div>
 
-        <div className="grid grid-cols-2 gap-x-8 gap-y-8 mt-8">
-          <div className="flex items-start gap-3">
-            <Wind className="mt-1 text-cyan-400" size={18} />
+        {/* Previsão da semana */}
 
-            <div>
-              <p className="text-xs text-zinc-500 uppercase">
-                Vento
+        <div className="mt-8 grid grid-cols-5 border-t border-zinc-800 pt-5 text-center">
+          {forecast.map(({ day, Icon, color, temp }) => (
+            <div key={day}>
+              <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                {day}
               </p>
 
-              <p className="mt-1">
-                14 km/h NE
-              </p>
-            </div>
-          </div>
+              <Icon className={`mx-auto mt-2 ${color}`} size={18} />
 
-          <div className="flex items-start gap-3">
-            <Droplets className="mt-1 text-blue-400" size={18} />
-
-            <div>
-              <p className="text-xs text-zinc-500 uppercase">
-                Umidade
-              </p>
-
-              <p className="mt-1">
-                42%
+              <p className="mt-2 text-xs text-zinc-300">
+                {temp}
               </p>
             </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <Sun className="mt-1 text-yellow-400" size={18} />
-
-            <div>
-              <p className="text-xs text-zinc-500 uppercase">
-                Índice UV
-              </p>
-
-              <p className="mt-1">
-                Alto (8)
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <CloudRain className="mt-1 text-blue-400" size={18} />
-
-            <div>
-              <p className="text-xs text-zinc-500 uppercase">
-                Chance de chuva
-              </p>
-
-              <p className="mt-1">
-                5%
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
 
-        <div className="mt-8 border-t border-zinc-800 pt-5">
-          <div className="grid grid-cols-5 text-center text-xs text-zinc-400">
-
-            <div>
-              <p>SEG</p>
-              <Sun className="mx-auto mt-2 text-yellow-400" size={18} />
-              <p className="mt-1">34°</p>
-            </div>
-
-            <div>
-              <p>TER</p>
-              <Sun className="mx-auto mt-2 text-yellow-400" size={18} />
-              <p className="mt-1">35°</p>
-            </div>
-
-            <div>
-              <p>QUA</p>
-              <Cloud className="mx-auto mt-2 text-blue-400" size={18} />
-              <p className="mt-1">31°</p>
-            </div>
-
-            <div>
-              <p>QUI</p>
-              <Sun className="mx-auto mt-2 text-yellow-400" size={18} />
-              <p className="mt-1">28°</p>
-            </div>
-
-            <div>
-              <p>SEX</p>
-              <CloudRain className="mx-auto mt-2 text-blue-400" size={18} />
-              <p className="mt-1">27°</p>
-            </div>
-
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
