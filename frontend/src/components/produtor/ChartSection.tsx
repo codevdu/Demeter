@@ -125,19 +125,20 @@ export function ChartSection() {
               <rect x="620" y="170" width="35" height="140" rx="3" fill="#1f4d3b" />
               <rect x="730" y="120" width="35" height="190" rx="3" fill="#1f4d3b" />
 
-              <polyline
+              <path
+                d="
+                  M 100 270
+                  C 145 220, 175 220, 200 230
+                  C 240 245, 275 260, 310 245
+                  C 350 225, 385 185, 420 170
+                  C 455 155, 495 205, 530 190
+                  C 565 175, 605 135, 640 120
+                  C 680 105, 715 75, 750 90
+                "
                 fill="none"
                 stroke="#8da9e8"
-                strokeWidth="3"
-                points="
-                  100,270
-                  200,230
-                  310,245
-                  420,170
-                  530,190
-                  640,120
-                  750,90
-                "
+                strokeWidth="4"
+                strokeLinecap="round"
               />
 
               <circle cx="100" cy="270" r="4" fill="#8da9e8" />
