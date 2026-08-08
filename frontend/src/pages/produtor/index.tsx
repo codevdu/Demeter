@@ -11,7 +11,7 @@ import {
 import { ChartSection } from "@/components/produtor/ChartSection";
 import { TimelineSection } from "@/components/produtor/TimelineSection";
 import { SoilSection } from "@/components/produtor/SoilSection";
-import { WeatherSection } from "@/components/produtor/WeatherSection";
+import { WeatherSection } from "@/components/produtor/WeatherSection";  
 
 export default function ProdutorDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -111,7 +111,11 @@ export default function ProdutorDashboard() {
                 
             </div>
 
-            <TimelineSection />
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                <TimelineSection />
+
+                <WeatherSection />
+            </div>
 
         </main>
       </div>
