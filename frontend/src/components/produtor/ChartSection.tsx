@@ -67,6 +67,27 @@ export function ChartSection() {
 
             <div className="absolute left-10 right-6 bottom-10 h-px bg-zinc-700"></div>
 
+            {/* Valores do eixo Y */}
+
+            <div className="absolute left-0 top-4 bottom-12 flex flex-col justify-between text-xs text-zinc-500">
+              <span>200</span>
+              <span>150</span>
+              <span>100</span>
+              <span>50</span>
+              <span>0</span>
+            </div>
+
+            {/* Meses do eixo X */}
+
+            <div className="absolute left-12 right-6 bottom-2 flex justify-between text-xs text-zinc-500">
+              <span>Jan</span>
+              <span>Fev</span>
+              <span>Mar</span>
+              <span>Abr</span>
+              <span>Mai</span>
+              <span>Jun</span>
+            </div>
+
         </div>
       </CardContent>
     </Card>
