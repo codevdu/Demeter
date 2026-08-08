@@ -21,7 +21,12 @@ export function SoilSection() {
 
           {/* Donut */}
 
-          <div className="relative w-44 h-44 rounded-full bg-zinc-800 flex items-center justify-center">
+          <div
+            className="relative w-44 h-44 rounded-full flex items-center justify-center"
+            style={{
+              background: "conic-gradient(#10b981 0% 82%, #27272a 82% 100%)",
+            }}
+          >
 
             <div className="absolute w-28 h-28 rounded-full bg-[#121214]" />
 

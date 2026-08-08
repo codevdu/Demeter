@@ -45,7 +45,7 @@ export function ChartSection() {
       </CardHeader>
 
       <CardContent>
-        <div className="relative h-[350px] rounded-lg bg-[#0f0f10] overflow-hidden">
+        <div className="relative h-[350px] rounded-lg bg-[#0f0f10] overflow-hidden pt-4">
 
             {/* Linhas horizontais + valores do eixo Y */}
 
@@ -110,7 +110,7 @@ export function ChartSection() {
             {/* Linha do gráfico */}
 
             <svg
-              className="absolute inset-0 w-full h-full"
+              className="absolute left-4 right-0 top-4 bottom-10 w-full"
               viewBox="0 0 800 350"
               preserveAspectRatio="none"
             >
@@ -119,13 +119,13 @@ export function ChartSection() {
                 stroke="#10b981"
                 strokeWidth="3"
                 points="
-                  60,270
-                  170,230
-                  280,245
-                  390,170
-                  500,190
-                  610,120
-                  720,90
+                  100,270
+                  200,230
+                  310,245
+                  420,170
+                  530,190
+                  640,120
+                  750,90
                 "
               />
 
