@@ -117,13 +117,20 @@ export function ChartSection() {
 
               {/* Barras de produtividade */}
 
-              <rect x="80"  y="190" width="35" height="120" rx="3" fill="#1f4d3b" />
-              <rect x="180" y="150" width="35" height="160" rx="3" fill="#1f4d3b" />
-              <rect x="290" y="125" width="35" height="185" rx="3" fill="#1f4d3b" />
-              <rect x="400" y="205" width="35" height="105" rx="3" fill="#1f4d3b" />
-              <rect x="510" y="105" width="35" height="205" rx="3" fill="#1f4d3b" />
-              <rect x="620" y="170" width="35" height="140" rx="3" fill="#1f4d3b" />
-              <rect x="730" y="120" width="35" height="190" rx="3" fill="#1f4d3b" />
+              <rect x="80"  y="190" width="35" height="120" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
+              <rect x="180" y="150" width="35" height="160" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
+              <rect x="290" y="125" width="35" height="185" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
+              <rect x="400" y="205" width="35" height="105" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
+              <rect x="510" y="105" width="35" height="205" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
+              <rect x="620" y="170" width="35" height="140" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
+              <rect x="730" y="120" width="35" height="190" rx="3" fill="#3d8b69"
+              fillOpacity="0.65" />
 
               <path
                 d="
