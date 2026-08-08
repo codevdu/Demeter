@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, Sprout } from "lucide-react";
 import { ExternalLink } from "lucide-react";
 
 export function TimelineSection() {
@@ -12,7 +12,7 @@ export function TimelineSection() {
     <Card className="bg-[#121214] border-zinc-800 h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">
+          <CardTitle className="text-lg font-normal text-zinc-200">
             Timeline da Safra
           </CardTitle>
 
@@ -66,7 +66,9 @@ export function TimelineSection() {
 
         <div className="flex gap-4">
           <div className="relative flex flex-col items-center">
-          <div className="w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
+            <div className="w-5 h-5 rounded-full bg-blue-500 ring-4 ring-blue-500/20 flex items-center justify-center text-white">
+              <Sprout size={12} />
+            </div>
           </div>
 
           <div>
@@ -74,7 +76,7 @@ export function TimelineSection() {
               Crescimento Vegetativo
             </p>
 
-            <p className="text-sm text-emerald-400">
+            <p className="text-sm text-zinc-400">
               Etapa atual - Semana 14
             </p>
           </div>
