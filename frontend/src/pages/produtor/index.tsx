@@ -12,6 +12,15 @@ import { ChartSection } from "@/components/produtor/ChartSection";
 import { TimelineSection } from "@/components/produtor/TimelineSection";
 import { SoilSection } from "@/components/produtor/SoilSection";
 import { WeatherSection } from "@/components/produtor/WeatherSection";  
+import {
+  TrendingUp,
+  BarChart3,
+  Droplets,
+  CircleCheck,
+  TriangleAlert,
+  CloudRain,
+  Plus,
+} from "lucide-react";
 
 export default function ProdutorDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -22,79 +31,128 @@ export default function ProdutorDashboard() {
 
       <div className="flex flex-1 flex-col h-screen overflow-y-auto">
         <Header
-          toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        title="Quixadá – Safra 2023/24"
         />
 
-        <main className="flex-1 max-w-7xl mx-auto w-full p-8">
-
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold">
-                Visão do Produtor Rural
-                </h1>
-
-                <p className="text-zinc-400 mt-2">
-                Acompanhe os principais indicadores da propriedade.
-                </p>
-            </div>
-
+        <main className="flex-1 overflow-auto p-8 bg-gradient-to-br from-black via-[#090b09] to-[#06110c]">
 
             {/* Cards */}
 
-            <div 
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <Card className="bg-[#121214] border-zinc-800">
-                    <CardHeader>
-                        <CardTitle className="text-sm text-zinc-400">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+                {/* Produtividade */}
+
+                <Card className="relative overflow-hidden bg-[#151d18] border-[#314238] rounded-xl">
+                    <CardHeader className="pb-2">
+                    <CardTitle className="text-base font-normal text-zinc-400">
                         Produtividade Média
-                        </CardTitle>
+                    </CardTitle>
+
+                    <TrendingUp
+                        className="absolute right-5 top-5 text-emerald-400"
+                        size={19}
+                    />
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-3xl font-bold">
+                    <div className="flex items-end gap-2">
+                        <span className="text-4xl font-light text-zinc-200">
                         142.4
-                        </p>
+                        </span>
 
-                        <p className="text-emerald-400 text-sm mt-2">
-                        +12,4% em relação ao ciclo anterior
-                        </p>
+                        <span className="mb-1 text-sm text-zinc-400">
+                        sc/ha
+                        </span>
+                    </div>
+
+                    <p className="mt-3 flex items-center gap-1 text-sm text-emerald-400">
+                        ↑ 12.4% vs ciclo anterior
+                    </p>
+
+                    <TrendingUp
+                        size={80}
+                        className="absolute -bottom-5 -right-3 text-white/[0.035]"
+                    />
                     </CardContent>
                 </Card>
 
-                <Card className="bg-[#121214] border-zinc-800">
-                    <CardHeader>
-                        <CardTitle className="text-sm text-zinc-400">
+
+                {/* Variação */}
+
+                <Card className="relative overflow-hidden bg-[#151d18] border-[#314238] rounded-xl">
+                    <CardHeader className="pb-2">
+                    <CardTitle className="text-base font-normal text-zinc-400">
                         Variação da Produção
-                        </CardTitle>
+                    </CardTitle>
+
+                    <BarChart3
+                        className="absolute right-5 top-5 text-blue-300"
+                        size={19}
+                    />
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-3xl font-bold">
-                        +8,2%
-                        </p>
+                    <div className="flex items-end gap-2">
+                        <span className="text-4xl font-light text-zinc-200">
+                        +8.2
+                        </span>
 
-                        <p className="text-blue-400 text-sm mt-2">
-                        Tendência positiva
-                        </p>
+                        <span className="mb-1 text-sm text-zinc-400">
+                        %
+                        </span>
+                    </div>
+
+                    <p className="mt-3 flex items-center gap-1 text-sm text-blue-300">
+                        <CircleCheck size={14} />
+                        Tendência de crescimento ideal
+                    </p>
+
+                    <BarChart3
+                        size={76}
+                        className="absolute -bottom-4 -right-2 text-white/[0.035]"
+                    />
                     </CardContent>
                 </Card>
 
-                <Card className="bg-[#121214] border-zinc-800">
-                    <CardHeader>
-                        <CardTitle className="text-sm text-zinc-400">
+
+                {/* Chuva */}
+
+                <Card className="relative overflow-hidden bg-[#151d18] border-[#314238] rounded-xl">
+                    <CardHeader className="pb-2">
+                    <CardTitle className="text-base font-normal text-zinc-400">
                         Chuva Acumulada
-                        </CardTitle>
+                    </CardTitle>
+
+                    <Droplets
+                        className="absolute right-5 top-5 text-amber-300"
+                        size={19}
+                    />
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-3xl font-bold">
-                        648 mm
-                        </p>
+                    <div className="flex items-end gap-2">
+                        <span className="text-4xl font-light text-zinc-200">
+                        648
+                        </span>
 
-                        <p className="text-amber-400 text-sm mt-2">
+                        <span className="mb-1 text-sm text-zinc-400">
+                        mm
+                        </span>
+                    </div>
+
+                    <p className="mt-3 flex items-center gap-1 text-sm text-amber-300">
+                        <TriangleAlert size={14} />
                         15% abaixo da média histórica
-                        </p>
+                    </p>
+
+                    <CloudRain
+                        size={86}
+                        className="absolute -bottom-5 -right-3 text-white/[0.035]"
+                    />
                     </CardContent>
                 </Card>
+
             </div>
 
 
@@ -116,6 +174,30 @@ export default function ProdutorDashboard() {
 
                 <WeatherSection />
             </div>
+
+            <footer className="mt-8 border-t border-zinc-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-500">
+                <p>© 2026 Chuva e Safra. Inteligência para o campo.</p>
+
+                <div className="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" className="hover:text-emerald-400 transition">
+                    Política de Privacidade
+                    </a>
+
+                    <a href="#" className="hover:text-emerald-400 transition">
+                    Termos de Uso
+                    </a>
+
+                    <a href="#" className="hover:text-emerald-400 transition">
+                    Fontes dos Dados
+                    </a>
+                </div>
+            </footer>
+
+            <button
+                className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-emerald-500 text-black shadow-lg hover:scale-110 hover:bg-emerald-400 transition-all duration-300 flex items-center justify-center"
+                >
+                <Plus size={28} />
+            </button>
 
         </main>
       </div>

@@ -3,9 +3,13 @@ import { Search, Bell, Menu } from "lucide-react";
 
 interface HeaderProps {
   toggleSidebar: () => void;
+  title?: string;
 }
 
-export function Header({ toggleSidebar }: HeaderProps) {
+export function Header({
+  toggleSidebar,
+  title = "Dashboard do Gestor",
+}: HeaderProps) {
   return (
     <header className="flex items-center justify-between px-8 py-4 border-b border-zinc-800 bg-[#09090b] sticky top-0 z-10">
       <div className="flex items-center h-full gap-4">
@@ -15,7 +19,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
         >
           <Menu className="size-5" />
         </button>
-        <h2 className="text-sm font-semibold text-emerald-400 border-b-2 border-emerald-400 pb-1 mt-1">Dashboard do Gestor</h2>
+        <h2 className="text-sm font-semibold text-emerald-400 border-b-2 border-emerald-400 pb-1 mt-1">{title}</h2>
       </div>
       
       <div className="flex items-center gap-6">

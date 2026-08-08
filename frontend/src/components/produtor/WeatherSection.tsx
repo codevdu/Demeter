@@ -10,6 +10,7 @@ import {
   Droplets,
   Sun,
   CloudRain,
+  Cloud,
 } from "lucide-react";
 
 export function WeatherSection() {
@@ -104,31 +105,31 @@ export function WeatherSection() {
 
             <div>
               <p>SEG</p>
-              <p className="mt-2 text-yellow-400">☀</p>
+              <Sun className="mx-auto mt-2 text-yellow-400" size={18} />
               <p className="mt-1">34°</p>
             </div>
 
             <div>
               <p>TER</p>
-              <p className="mt-2 text-yellow-400">☀</p>
+              <Sun className="mx-auto mt-2 text-yellow-400" size={18} />
               <p className="mt-1">35°</p>
             </div>
 
             <div>
               <p>QUA</p>
-              <p className="mt-2 text-blue-400">☁</p>
+              <Cloud className="mx-auto mt-2 text-blue-400" size={18} />
               <p className="mt-1">31°</p>
             </div>
 
             <div>
               <p>QUI</p>
-              <p className="mt-2 text-yellow-400">☀</p>
+              <Sun className="mx-auto mt-2 text-yellow-400" size={18} />
               <p className="mt-1">28°</p>
             </div>
 
             <div>
               <p>SEX</p>
-              <p className="mt-2 text-blue-400">☂</p>
+              <CloudRain className="mx-auto mt-2 text-blue-400" size={18} />
               <p className="mt-1">27°</p>
             </div>
 
