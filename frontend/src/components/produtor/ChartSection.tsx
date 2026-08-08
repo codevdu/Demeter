@@ -129,13 +129,13 @@ export function ChartSection() {
                 "
               />
 
-              <circle cx="60" cy="270" r="4" fill="#10b981" />
-              <circle cx="170" cy="230" r="4" fill="#10b981" />
-              <circle cx="280" cy="245" r="4" fill="#10b981" />
-              <circle cx="390" cy="170" r="4" fill="#10b981" />
-              <circle cx="500" cy="190" r="4" fill="#10b981" />
-              <circle cx="610" cy="120" r="4" fill="#10b981" />
-              <circle cx="720" cy="90" r="4" fill="#10b981" />
+              <circle cx="100" cy="270" r="4" fill="#10b981" />
+              <circle cx="200" cy="230" r="4" fill="#10b981" />
+              <circle cx="310" cy="245" r="4" fill="#10b981" />
+              <circle cx="420" cy="170" r="4" fill="#10b981" />
+              <circle cx="530" cy="190" r="4" fill="#10b981" />
+              <circle cx="640" cy="120" r="4" fill="#10b981" />
+              <circle cx="750" cy="90" r="4" fill="#10b981" />
             </svg>
 
         </div>
