@@ -1,62 +1,92 @@
 import { prisma } from '../prisma/index.js';
 import { Profile, User } from '@prisma/client';
 
+export interface CarPropertyItem {
+  carReceipt: string;
+  municipality: string;
+  municipalityId: number;
+}
+
 export interface CreateUserData {
   email: string;
   name: string;
+  cpfCnpj: string;
   passwordHash: string;
   profile: Profile;
-  localId?: string | null;
-  allowedLocals?: string[];
+  state?: string | null;
+  coordinates?: string | null;
+  carPropertiesList?: CarPropertyItem[];
 }
 
 export class UserRepository {
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<(User & { carProperties: any[] }) | null> {
     return prisma.user.findUnique({
       where: { email },
-      include: {
-        allowedLocals: {
-          select: {
-            localId: true,
-          },
-        },
-      },
+      include: { carProperties: true },
     });
   }
 
-  async findById(id: string) {
+  async findByCpfCnpj(cpfCnpj: string): Promise<User | null> {
+    return prisma.user.findUnique({
+      where: { cpfCnpj },
+    });
+  }
+
+  async findById(id: string): Promise<(User & { carProperties: any[] }) | null> {
     return prisma.user.findUnique({
       where: { id },
-      include: {
-        allowedLocals: {
-          select: {
-            localId: true,
-          },
-        },
-      },
+      include: { carProperties: true },
     });
   }
 
-  async create(data: CreateUserData) {
-    const isTecnico = data.profile === Profile.TECNICO;
-    const isProdutor = data.profile === Profile.PRODUTOR;
+  async findByState(state: string): Promise<User[]> {
+    return prisma.user.findMany({
+      where: { state },
+      include: { carProperties: true },
+    });
+  }
+
+  async create(data: CreateUserData): Promise<User> {
+    const isProducer = data.profile === Profile.PRODUTOR;
+
     return prisma.user.create({
       data: {
         email: data.email,
         name: data.name,
+        cpfCnpj: data.cpfCnpj,
         passwordHash: data.passwordHash,
         profile: data.profile,
-        localId: isProdutor ? data.localId : null,
-        allowedLocals:
-          isTecnico && data.allowedLocals && data.allowedLocals.length > 0
+        state: data.state,
+        coordinates: data.coordinates,
+        carProperties:
+          isProducer && data.carPropertiesList && data.carPropertiesList.length > 0
             ? {
-              create: data.allowedLocals.map((localId) => ({ localId })),
-            }
+                create: data.carPropertiesList.map((prop) => ({
+                  carReceipt: prop.carReceipt,
+                  municipality: prop.municipality,
+                  municipalityId: prop.municipalityId,
+                })),
+              }
             : undefined,
       },
-      include: {
-        allowedLocals: true,
+      include: { carProperties: true },
+    });
+  }
+
+  async updateProfile(id: string, profile: Profile, coordinates?: string): Promise<User> {
+    return prisma.user.update({
+      where: { id },
+      data: {
+        profile,
+        // Atualiza as coordenadas se foram fornecidas; limpa caso explicitamente null/undefined se necessário
+        coordinates: coordinates !== undefined ? coordinates : undefined,
       },
+    });
+  }
+
+  async delete(id: string): Promise<User> {
+    return prisma.user.delete({
+      where: { id },
     });
   }
 }
