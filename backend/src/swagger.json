@@ -1,0 +1,300 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Demeter - Gestão Agrícola e Dashboard",
+    "version": "1.0.0",
+    "description": "Especificação OpenAPI completa mapeando a estrutura de rotas e controllers do projeto."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333",
+      "description": "Servidor Local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Profile": {
+        "type": "string",
+        "enum": ["PRODUTOR", "TECNICO", "GESTOR"]
+      },
+      "RegisterDTO": {
+        "type": "object",
+        "required": ["email", "password", "name", "cpfCnpj"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "example": "produtor@demeter.com" },
+          "password": { "type": "string", "example": "Senha@123" },
+          "name": { "type": "string", "example": "João da Silva" },
+          "cpfCnpj": { "type": "string", "example": "12345678900" }
+        }
+      },
+      "LoginDTO": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "example": "produtor@demeter.com" },
+          "password": { "type": "string", "example": "Senha@123" }
+        }
+      },
+      "UpdateProfileDTO": {
+        "type": "object",
+        "required": ["profile"],
+        "properties": {
+          "profile": { "$ref": "#/components/schemas/Profile" },
+          "coordinates": { 
+            "type": "string", 
+            "nullable": true, 
+            "description": "Obrigatório caso o perfil seja alterado para TECNICO",
+            "example": "-24.9555,-53.4552" 
+          }
+        }
+      },
+      "CarProperty": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "carReceipt": { "type": "string", "example": "PR-4108304-XXXXXXXXXXXXXXXXXXXX" },
+          "municipality": { "type": "string", "example": "Cascavel" },
+          "municipalityId": { "type": "integer", "example": 4108304 }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "profile": { "$ref": "#/components/schemas/Profile" },
+          "state": { "type": "string", "nullable": true, "example": "PR" },
+          "coordinates": { "type": "string", "nullable": true, "example": "-24.9555,-53.4552" },
+          "carProperties": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CarProperty" }
+          }
+        }
+      },
+      "DashboardScope": {
+        "type": "object",
+        "properties": {
+          "perfil": { "type": "string", "example": "produtor" },
+          "municipios": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["4108304"]
+          },
+          "coordinates": { "type": "string", "nullable": true, "example": "-24.9555,-53.4552" }
+        }
+      },
+      "DashboardResponse": {
+        "type": "object",
+        "properties": {
+          "scope": { "$ref": "#/components/schemas/DashboardScope" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Cadastra um novo usuário",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterDTO" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuário cadastrado com sucesso" },
+          "400": { "description": "Dados de registro inválidos" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Realiza login na plataforma",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login efetuado com sucesso" },
+          "401": { "description": "Credenciais incorretas" }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Lista usuários cadastrados no estado do Gestor",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de usuários",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          },
+          "401": { "description": "Não autorizado" }
+        }
+      }
+    },
+    "/users/{id}/profile": {
+      "patch": {
+        "summary": "Atualiza o perfil e coordenadas do usuário",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateProfileDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Perfil atualizado com sucesso" },
+          "400": { "description": "Erro de validação de dados" }
+        }
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "summary": "Remove um usuário do sistema",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Usuário removido com sucesso" },
+          "400": { "description": "Erro ao remover usuário" }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "summary": "Obtém dados estruturados e filtros para o Dashboard",
+        "tags": ["Dashboard"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "cultura",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "milho" }
+          },
+          {
+            "name": "de",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "2015" }
+          },
+          {
+            "name": "ate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "2022" }
+          },
+          {
+            "name": "municipios",
+            "in": "query",
+            "required": false,
+            "description": "IDs dos municípios separados por vírgula (ex: 4108304,4108305)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dados de dados e escopo retornados com sucesso",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardResponse" }
+              }
+            }
+          },
+          "401": { "description": "Usuário não autenticado" },
+          "400": { "description": "Erro de regra de negócio ao consultar o dashboard" }
+        }
+      }
+    },
+    "/api/grafico": {
+      "get": {
+        "summary": "Endpoint alternativo para dados analíticos do Dashboard",
+        "tags": ["Dashboard"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "cultura",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "milho" }
+          },
+          {
+            "name": "de",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "2015" }
+          },
+          {
+            "name": "ate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "2022" }
+          },
+          {
+            "name": "municipios",
+            "in": "query",
+            "required": false,
+            "description": "IDs dos municípios separados por vírgula",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dados do gráfico processados",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardResponse" }
+              }
+            }
+          },
+          "401": { "description": "Usuário não autenticado" },
+          "400": { "description": "Erro de processamento dos dados" }
+        }
+      }
+    }
+  }
+}
