@@ -45,7 +45,7 @@ export function Sidebar() {
 								className={twMerge(
 									'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-foreground-subtle transition-colors',
 									'hover:bg-muted hover:text-foreground',
-									'data-[active]:bg-primary data-[active]:text-primary-foreground data-[active]:hover:bg-primary',
+									'data-active:bg-primary data-active:text-primary-foreground data-active:hover:bg-primary',
 								)}
 							>
 								<Icon className="size-4 shrink-0" />

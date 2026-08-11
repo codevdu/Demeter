@@ -35,7 +35,7 @@ export default function ProdutorDashboard() {
         title="Quixadá – Safra 2023/24"
         />
 
-        <main className="flex-1 overflow-auto p-8 bg-gradient-to-br from-black via-[#090b09] to-[#06110c]">
+        <main className="flex-1 overflow-auto p-8 bg-linear-to-br from-black via-[#090b09] to-[#06110c]">
 
             {/* Cards */}
 

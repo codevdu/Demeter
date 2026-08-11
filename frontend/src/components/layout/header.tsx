@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Search, Bell, Menu } from "lucide-react";
 
 interface HeaderProps {

@@ -52,7 +52,7 @@ export function MunicipalityTable() {
 			</CardHeader>
 
 			<CardContent className="overflow-x-auto">
-				<table className="w-full min-w-[640px] border-collapse text-sm">
+				<table className="w-full min-w-160 border-collapse text-sm">
 					<thead>
 						<tr className="border-b border-border text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
 							<th className="py-2 pr-4 font-semibold">Municipality</th>
@@ -71,10 +71,20 @@ export function MunicipalityTable() {
 								<td className="py-3 pr-4 text-foreground-subtle">{row.temp}°C</td>
 								<td className="py-3 pr-4 font-medium text-primary">{row.productivity.toFixed(2)}</td>
 								<td className="py-3 pr-4">
-									<Progress value={row.soilMoisture} tone={row.status} className="max-w-28" />
+									<Progress value={row.soilMoisture} className="max-w-28" />
 								</td>
 								<td className="py-3 pr-4">
-									<Badge variant={row.status}>{statusLabel[row.status]}</Badge>
+									<Badge
+										variant={
+											row.status === 'optimal'
+												? 'default'
+												: row.status === 'saturated'
+													? 'secondary'
+													: 'destructive'
+										}
+									>
+										{statusLabel[row.status]}
+									</Badge>
 								</td>
 							</tr>
 						))}

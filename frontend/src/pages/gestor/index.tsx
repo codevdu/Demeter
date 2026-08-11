@@ -116,9 +116,9 @@ export default function GestorDashboard() {
                     <CardDescription className="text-zinc-500">Monitoramento coroplético ao vivo para o Estado</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="relative h-[420px] w-full rounded-lg border border-zinc-800/80 overflow-hidden bg-[#09090b] flex flex-col items-center justify-center">
+                    <div className="relative h-105 w-full rounded-lg border border-zinc-800/80 overflow-hidden bg-[#09090b] flex flex-col items-center justify-center">
                        
-                       <div className="absolute inset-0 bg-[linear-gradient(to_right,#18181b_1px,transparent_1px),linear-gradient(to_bottom,#18181b_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-40"></div>
+                       <div className="absolute inset-0 bg-[linear-gradient(to_right,#18181b_1px,transparent_1px),linear-gradient(to_bottom,#18181b_1px,transparent_1px)] bg-size-[2rem_2rem] opacity-40"></div>
                        <div className="absolute flex flex-col items-center text-zinc-600 opacity-70">
                           <Layers className="size-10 mb-2" />
                           <p className="text-sm font-medium">Integração Cartográfica Pendente</p>

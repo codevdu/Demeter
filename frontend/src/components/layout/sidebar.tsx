@@ -20,7 +20,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
     <aside 
       className={`${
         isOpen ? "w-64" : "w-20"
-      } transition-all duration-300 ease-in-out border-r border-zinc-800 bg-[#121214] flex flex-col justify-between hidden md:flex shrink-0`}
+      } transition-all duration-300 ease-in-out border-r border-zinc-800 bg-[#121214] flex flex-col justify-between md:flex shrink-0`}
     >
       <div>
         <div className={`p-6 flex items-center ${isOpen ? "justify-start" : "justify-center"} h-20`}>
@@ -59,7 +59,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
 
       <div className="mt-auto">
         {isOpen && (
-          <div className="mx-3 mb-4 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.06] p-4">
+          <div className="mx-3 mb-4 rounded-lg border border-emerald-500/20 bg-emerald-500/6 p-4">
             <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-400">
               Novo
             </span>

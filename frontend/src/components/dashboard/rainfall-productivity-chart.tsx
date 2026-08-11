@@ -1,7 +1,7 @@
 'use client'
 
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Cell } from 'recharts'
-import * as Select from '@base-ui/react/select'
+import { Select } from '@base-ui/react/select'
 import { ChevronDown, Check } from 'lucide-react'
 import { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
@@ -44,12 +44,12 @@ export function RainfallProductivityChart() {
 					</Select.Trigger>
 					<Select.Portal>
 						<Select.Positioner sideOffset={6}>
-							<Select.Popup className="min-w-[10rem] rounded-lg border border-border bg-surface-raised p-1 shadow-lg">
+							<Select.Popup className="min-w-40 rounded-lg border border-border bg-surface-raised p-1 shadow-lg">
 								{ranges.map((option) => (
 									<Select.Item
 										key={option}
 										value={option}
-										className="flex cursor-pointer items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-xs text-foreground-subtle data-[selected]:bg-muted data-[selected]:text-foreground data-[highlighted]:bg-muted data-[highlighted]:text-foreground"
+										className="flex cursor-pointer items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-xs text-foreground-subtle data-selected:bg-muted data-selected:text-foreground data-highlighted:bg-muted data-highlighted:text-foreground"
 									>
 										<Select.ItemText>{option}</Select.ItemText>
 										<Select.ItemIndicator>

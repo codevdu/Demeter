@@ -13,7 +13,7 @@ const stats = [
 	{ label: 'Yield Est. (ton/ha)', value: '8.4', change: 2.1 },
 ]
 
-export function DashboardOverview() {
+export default function DashboardOverview() {
 	return (
 		<div className="flex min-h-screen bg-background">
 			<Sidebar />
