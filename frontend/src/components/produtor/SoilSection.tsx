@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -10,13 +11,12 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const GAP = 6;
 
 const composition = [
-  { label: "Argila (Argiloso)", value: 45, color: "#10b981" },
-  { label: "Silte (Siltoso)", value: 35, color: "#cbd5e1" },
-  { label: "Areia (Arenoso)", value: 20, color: "#f59e0b" },
+  { label: "Argila (Argiloso)", value: 45, color: "var(--primary)" },
+  { label: "Silte (Siltoso)", value: 35, color: "var(--status-blue)" },
+  { label: "Areia (Arenoso)", value: 20, color: "var(--status-orange)" },
 ];
 
 export function SoilSection() {
-
   /* Deslocamento acumulado de cada fatia do anel */
 
   let offset = 0;
@@ -31,96 +31,71 @@ export function SoilSection() {
   });
 
   return (
-    <Card className="bg-[#121214] border-zinc-800 h-full">
-
+    <Card data-slot="soil-section">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold uppercase tracking-widest text-zinc-200">
-          Composição do Solo
-        </CardTitle>
+        <CardTitle>Composição do Solo</CardTitle>
 
-        <p className="text-xs text-zinc-500">
-          Análise do Setor A-24
-        </p>
+        <CardDescription>Análise do Setor A-24</CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="flex flex-col items-center gap-4">
+        {/* Anel */}
 
-        <div className="flex flex-col items-center">
+        <div className="relative size-40">
+          <svg viewBox="0 0 176 176" className="size-full -rotate-90">
+            <circle
+              cx="88"
+              cy="88"
+              r={RADIUS}
+              fill="none"
+              className="stroke-muted"
+              strokeWidth="12"
+            />
 
-          {/* Anel */}
-
-          <div className="relative mt-4 size-44">
-
-            <svg viewBox="0 0 176 176" className="size-full -rotate-90">
-
+            {slices.map((slice) => (
               <circle
+                key={slice.label}
                 cx="88"
                 cy="88"
                 r={RADIUS}
                 fill="none"
-                stroke="#27272a"
+                stroke={slice.color}
                 strokeWidth="12"
+                strokeDasharray={`${slice.length - GAP} ${CIRCUMFERENCE - slice.length + GAP}`}
+                strokeDashoffset={-slice.start}
               />
-
-              {slices.map((slice) => (
-                <circle
-                  key={slice.label}
-                  cx="88"
-                  cy="88"
-                  r={RADIUS}
-                  fill="none"
-                  stroke={slice.color}
-                  strokeWidth="12"
-                  strokeDasharray={`${slice.length - GAP} ${CIRCUMFERENCE - slice.length + GAP}`}
-                  strokeDashoffset={-slice.start}
-                />
-              ))}
-
-            </svg>
-
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-semibold text-zinc-100">
-                88%
-              </span>
-
-              <span className="mt-1 text-[10px] uppercase tracking-widest text-zinc-500">
-                Saudável
-              </span>
-            </div>
-
-          </div>
-
-          {/* Legenda */}
-
-          <div className="mt-10 w-full space-y-4 text-sm">
-
-            {composition.map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-
-                <div className="flex items-center gap-2">
-                  <span
-                    className="size-2 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
-
-                  <span className="text-zinc-400">
-                    {item.label}
-                  </span>
-                </div>
-
-                <span className="text-zinc-400">
-                  {item.value}%
-                </span>
-
-              </div>
             ))}
+          </svg>
 
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-semibold text-foreground">88%</span>
+
+            <span className="text-[11px] text-muted-foreground">Saudável</span>
           </div>
-
         </div>
 
-      </CardContent>
+        {/* Legenda */}
 
+        <dl className="flex w-full flex-col gap-2.5">
+          {composition.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center justify-between text-sm"
+            >
+              <dt className="flex items-center gap-2 text-foreground-subtle">
+                <span
+                  className="size-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                  aria-hidden
+                />
+                {item.label}
+              </dt>
+
+              <dd className="font-medium text-foreground">{item.value}%</dd>
+            </div>
+          ))}
+        </dl>
+      </CardContent>
     </Card>
   );
 }
