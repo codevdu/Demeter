@@ -16,19 +16,20 @@ const composition = [
   { label: "Areia (Arenoso)", value: 20, color: "var(--status-orange)" },
 ];
 
+function sliceLength(value: number) {
+  return (value / 100) * CIRCUMFERENCE;
+}
+
 export function SoilSection() {
   /* Deslocamento acumulado de cada fatia do anel */
 
-  let offset = 0;
-
-  const slices = composition.map((item) => {
-    const length = (item.value / 100) * CIRCUMFERENCE;
-    const slice = { ...item, length, start: offset };
-
-    offset += length;
-
-    return slice;
-  });
+  const slices = composition.map((item, index) => ({
+    ...item,
+    length: sliceLength(item.value),
+    start: composition
+      .slice(0, index)
+      .reduce((total, previous) => total + sliceLength(previous.value), 0),
+  }));
 
   return (
     <Card data-slot="soil-section">
