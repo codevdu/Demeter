@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   EyeOff,
   User,
@@ -16,8 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toglle";
+import Link from "next/link";
+import { registerUser } from "@/services/auth-service";
 
 export default function RegisterForm() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const [nome, setNome] = useState("");
@@ -27,6 +32,9 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
 
   const [emailError, setEmailError] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const messages = [
     "Monitore dados climáticos em tempo real",
     "Acompanhe indicadores agrícolas da sua região",
@@ -101,10 +109,11 @@ export default function RegisterForm() {
     setDocumento(somenteNumeros.slice(0, 14));
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
+    setSubmitError("");
 
     const emailValido =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -117,16 +126,37 @@ export default function RegisterForm() {
       return;
     }
 
-    console.log("Cadastro permitido");
+    if (documento.length !== 11 && documento.length !== 14) {
+      setSubmitError("Informe um CPF (11 dígitos) ou CNPJ (14 dígitos) válido.");
+      return;
+    }
 
-    console.log({
-      nome,
-      sobrenome,
-      email,
-      documento,
-      password,
-    });
+    // concatena nome + sobrenome, removendo espaços duplicados nas bordas/meio
+    const nomeCompleto = `${nome} ${sobrenome}`
+      .trim()
+      .replace(/\s+/g, " ");
 
+    setLoading(true);
+
+    try {
+      await registerUser({
+        name: nomeCompleto,
+        email,
+        cpfCnpj: documento,
+        password,
+      });
+
+      // nada de localStorage — o cookie httpOnly já foi setado pelo back
+      router.push("/dashboard");
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Erro inesperado. Tente novamente."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -187,7 +217,7 @@ export default function RegisterForm() {
           <ThemeToggle />
         </div>
 
-        <div className="mt-12 flex w-full max-w-md flex-col lg:mt-0 lg:max-w-[550px]">
+        <div className="mt-12 flex w-full max-w-md flex-col lg:mt-0 lg:max-w-137.5">
           <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl dark:text-white">
             Seja bem-vindo
           </h1>
@@ -326,23 +356,30 @@ export default function RegisterForm() {
               </div>
             </div>
 
+            {submitError && (
+              <p className="text-center text-xs text-red-500">
+                {submitError}
+              </p>
+            )}
+
             <Button
               type="submit"
-              className="mt-5 h-11 w-full bg-emerald-700 text-sm font-semibold text-white transition duration-300 hover:bg-emerald-600"
+              disabled={loading}
+              className="mt-5 h-11 w-full bg-emerald-700 text-sm font-semibold text-white transition duration-300 hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Criar conta
+              {loading ? "Criando conta..." : "Criar conta"}
 
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
             <p className="text-center text-xs text-zinc-600 dark:text-zinc-400">
               Já tem uma conta?{" "}
-              <a
+              <Link
                 href="/login"
                 className="cursor-pointer font-medium text-emerald-500 hover:text-emerald-400"
               >
                 Entrar
-              </a>
+              </Link>
             </p>
           </form>
 
