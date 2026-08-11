@@ -69,7 +69,7 @@ export function SoilSection() {
           </svg>
 
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-semibold text-foreground">88%</span>
+            <span className="text-2xl font-semibold text-primary">88%</span>
 
             <span className="text-[11px] text-muted-foreground">Saudável</span>
           </div>
