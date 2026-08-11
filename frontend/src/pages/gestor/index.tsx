@@ -33,7 +33,7 @@ export default function GestorDashboard() {
     try {
       setHasError(false);
       await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
+    } catch {
       setHasError(true);
     } finally {
       setIsLoading(false);
@@ -41,7 +41,10 @@ export default function GestorDashboard() {
   };
 
   React.useEffect(() => {
-    fetchData();
+    const t = setTimeout(() => {
+      fetchData();
+    }, 0);
+    return () => clearTimeout(t);
   }, []);
 
   return (
