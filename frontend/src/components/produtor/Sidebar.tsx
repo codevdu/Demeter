@@ -62,7 +62,7 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-foreground-subtle transition-colors",
                   "hover:bg-muted hover:text-foreground",
-                  "data-active:bg-primary data-active:text-primary-foreground data-active:hover:bg-primary",
+                  "data-active:bg-status-blue data-active:text-white data-active:hover:bg-status-blue",
                 )}
               >
                 <Icon className="size-4 shrink-0" />
@@ -80,13 +80,14 @@ export function Sidebar() {
           {talhoes.map(({ label, color }) => (
             <div
               key={label}
-              className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-foreground-subtle"
+              className="flex items-center justify-between gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-foreground-subtle"
             >
+              {label}
+
               <span
                 className={cn("size-1.5 shrink-0 rounded-full", color)}
                 aria-hidden
               />
-              {label}
             </div>
           ))}
         </div>
