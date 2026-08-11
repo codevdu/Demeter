@@ -20,8 +20,15 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido'),
-  password: z.string().min(1, 'Senha é obrigatória'),
+  password: z.string().min(6, 'Senha é obrigatória'),
 });
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'strict' as const,
+  maxAge: 1000 * 60 * 60 * 2,
+};
 
 export class AuthController {
   private authService: AuthService;
@@ -34,9 +41,11 @@ export class AuthController {
   async register(req: Request, res: Response) {
     try {
       const parsedData = registerSchema.parse(req.body);
-      const result = await this.authService.register(parsedData);
+      const result: any = await this.authService.register(parsedData);
+      const { token, ...usuario } = result;
 
-      return res.status(201).json(result);
+      const resBuilder = res.status(201).json(usuario);
+      return token ? resBuilder.cookie('token', token, COOKIE_OPTIONS) : resBuilder;
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ errors: error.issues });
@@ -48,14 +57,16 @@ export class AuthController {
 
       return res.status(400).json({ error: error.message || 'Erro ao realizar cadastro.' });
     }
-  };
+  }
 
   async login(req: Request, res: Response) {
     try {
       const parsedData = loginSchema.parse(req.body);
-      const result = await this.authService.login(parsedData);
+      const result: any = await this.authService.login(parsedData);
+      const { token, ...usuario } = result;
 
-      return res.status(200).json(result);
+      const resBuilder = res.status(200).json(usuario);
+      return token ? resBuilder.cookie('token', token, COOKIE_OPTIONS) : resBuilder;
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ errors: error.issues });
@@ -63,5 +74,5 @@ export class AuthController {
 
       return res.status(401).json({ error: error.message || 'Erro ao realizar login.' });
     }
-  };
+  }
 }

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from 'dotenv';
+import cookieParser from "cookie-parser"
 import { routes } from "./routes/index.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json" with { type: "json" };
@@ -13,6 +14,7 @@ const PORT = process.env.PORT || 3333;
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONT_URL || 'http://localhost:3000',
