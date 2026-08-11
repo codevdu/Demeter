@@ -1,9 +1,11 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 /* Barras de produtividade: centro (x) e altura no viewBox de 800x320 */
 
@@ -19,64 +21,56 @@ const bars = [
 
 const months = ["Nov", "Dez", "Jan", "Fev", "Mar", "Abr", "Mai"];
 
+const ranges = ["30D", "6M", "1A"];
+
 const BASELINE = 290;
 const BAR_WIDTH = 26;
 
 export function ChartSection() {
   return (
-    <Card className="xl:col-span-2 bg-[#121214] border-zinc-800">
-      <CardHeader>
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <Card data-slot="chart-section" className="xl:col-span-2">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <CardTitle>Produtividade x Chuva</CardTitle>
 
-          <div>
-            <CardTitle className="text-2xl font-normal">
-              Produtividade x Chuva
-            </CardTitle>
+          <CardDescription>
+            Indicadores de performance ao longo da safra 2023/24
+          </CardDescription>
+        </div>
 
-            <p className="mt-1 max-w-[16rem] text-sm leading-relaxed text-zinc-500">
-              Indicadores de performance ao longo da safra 2023/24
-            </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <select className="rounded-lg border border-border bg-surface-raised px-3 py-1.5 text-xs font-medium text-foreground-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <option>Milho</option>
+          </select>
+
+          <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-raised p-1">
+            {ranges.map((range, index) => (
+              <button
+                key={range}
+                type="button"
+                data-active={index === 0 ? "" : undefined}
+                className={cn(
+                  "rounded-md px-2.5 py-1 text-xs font-medium text-foreground-subtle transition-colors",
+                  "hover:text-foreground",
+                  "data-active:bg-primary data-active:text-primary-foreground",
+                )}
+              >
+                {range}
+              </button>
+            ))}
           </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-
-            <select className="rounded-md border border-zinc-800 bg-[#18181b] px-3 py-1.5 text-sm text-zinc-300">
-              <option>Milho</option>
-            </select>
-
-            <div className="flex items-center gap-1 rounded-md border border-zinc-800 bg-[#18181b] p-1">
-
-              <button className="rounded px-2.5 py-1 text-xs font-semibold text-black bg-emerald-400">
-                30D
-              </button>
-
-              <button className="rounded px-2.5 py-1 text-xs font-semibold text-zinc-400 hover:text-zinc-200">
-                6M
-              </button>
-
-              <button className="rounded px-2.5 py-1 text-xs font-semibold text-zinc-400 hover:text-zinc-200">
-                1Y
-              </button>
-
-            </div>
-
-          </div>
-
         </div>
       </CardHeader>
 
       <CardContent>
-
         {/* Área de plotagem */}
 
-        <div className="relative h-[300px] overflow-hidden rounded-lg border border-indigo-400/15 bg-[#0d0d0f]">
-
+        <div className="relative h-64 overflow-hidden rounded-lg border border-border bg-background">
           <svg
             className="absolute inset-0 h-full w-full"
             viewBox="0 0 800 320"
             preserveAspectRatio="none"
           >
-
             {/* Barras de produtividade */}
 
             {bars.map((bar) => (
@@ -86,7 +80,8 @@ export function ChartSection() {
                   y={BASELINE - bar.height}
                   width={BAR_WIDTH}
                   height={bar.height}
-                  fill="#2f6f56"
+                  className="fill-primary"
+                  fillOpacity={0.25}
                 />
 
                 <rect
@@ -94,7 +89,7 @@ export function ChartSection() {
                   y={BASELINE - bar.height}
                   width={BAR_WIDTH}
                   height={5}
-                  fill="#34d399"
+                  className="fill-primary"
                 />
               </g>
             ))}
@@ -113,48 +108,39 @@ export function ChartSection() {
                 C 755 121, 775 146, 795 170
               "
               fill="none"
-              stroke="#9db1e8"
-              strokeWidth="4"
+              className="stroke-status-blue"
+              strokeWidth="3"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
-
           </svg>
 
           {/* Meses do eixo X */}
 
-          <div className="absolute bottom-2 left-[1.875%] right-[1.875%] flex text-[11px] text-zinc-500">
+          <div className="absolute bottom-2 left-[1.875%] right-[1.875%] flex text-[11px] text-muted-foreground">
             {months.map((month) => (
               <span key={month} className="flex-1 text-center">
                 {month}
               </span>
             ))}
           </div>
-
         </div>
 
         {/* Legenda */}
 
-        <div className="mt-5 flex gap-6 text-xs">
-
+        <dl className="mt-4 flex flex-wrap gap-6 text-sm">
           <div className="flex items-center gap-2">
-            <div className="size-2.5 rounded-full bg-emerald-400" />
+            <span className="size-2 shrink-0 rounded-full bg-primary" />
 
-            <span className="text-zinc-400">
-              Produtividade (sc/ha)
-            </span>
+            <dt className="text-foreground-subtle">Produtividade (sc/ha)</dt>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="size-2.5 rounded-full bg-[#9db1e8]" />
+            <span className="size-2 shrink-0 rounded-full bg-status-blue" />
 
-            <span className="text-zinc-400">
-              Chuva (mm)
-            </span>
+            <dt className="text-foreground-subtle">Chuva (mm)</dt>
           </div>
-
-        </div>
-
+        </dl>
       </CardContent>
     </Card>
   );
