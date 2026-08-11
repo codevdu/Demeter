@@ -37,6 +37,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --surface: oklch(1 0 0);
+  --surface-raised: oklch(0.97 0 0);
+  --foreground-subtle: oklch(0.45 0 0);
+  --status-blue: #3b82f6;
+  --status-orange: #d97706;
+  --status-purple: #a855f7;
 }
 
 @theme inline {
@@ -74,6 +80,12 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-status-blue: var(--status-blue);
+  --color-status-orange: var(--status-orange);
+  --color-status-purple: var(--status-purple);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -121,6 +133,50 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --surface: oklch(0.205 0 0);
+  --surface-raised: oklch(0.269 0 0);
+  --foreground-subtle: oklch(0.78 0 0);
+}
+
+/*
+ * Tema do dashboard agronômico.
+ * Mesma paleta do painel técnico, aplicada apenas nas telas que recebem
+ * a classe .theme-dashboard — as demais páginas seguem o tema padrão.
+ */
+.theme-dashboard {
+  --background: #0a0f0d;
+  --foreground: #e8ede9;
+  --foreground-subtle: #a3aca6;
+  --muted-foreground: #6b756f;
+
+  --surface: #101613;
+  --surface-raised: #141b18;
+
+  --card: #101613;
+  --card-foreground: #e8ede9;
+  --popover: #141b18;
+  --popover-foreground: #e8ede9;
+
+  --sidebar: #0c1210;
+  --sidebar-foreground: #e8ede9;
+  --sidebar-border: #1e2723;
+
+  --border: #1e2723;
+  --input: #1e2723;
+  --ring: #22c55e;
+
+  --primary: #22c55e;
+  --primary-foreground: #06120a;
+  --secondary: #16201b;
+  --secondary-foreground: #e8ede9;
+  --muted: #182420;
+  --accent: #182420;
+  --accent-foreground: #e8ede9;
+  --destructive: #ef4444;
+
+  --status-blue: #3b82f6;
+  --status-orange: #d97706;
+  --status-purple: #a855f7;
 }
 
 @layer base {
