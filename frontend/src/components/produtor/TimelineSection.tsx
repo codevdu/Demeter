@@ -4,83 +4,79 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, Sprout } from "lucide-react";
-import { ExternalLink } from "lucide-react";
+import { Check, ExternalLink, Sprout } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const steps = [
+  {
+    label: "Preparo do Solo",
+    detail: "Concluído em 12 de outubro de 2023",
+    current: false,
+  },
+  {
+    label: "Plantio",
+    detail: "Concluído em 4 de novembro de 2023",
+    current: false,
+  },
+  {
+    label: "Crescimento Vegetativo",
+    detail: "Etapa atual — Semana 14",
+    current: true,
+  },
+];
 
 export function TimelineSection() {
   return (
-    <Card className="bg-[#121214] border-zinc-800 h-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-normal text-zinc-200">
-            Timeline da Safra
-          </CardTitle>
+    <Card data-slot="timeline-section">
+      <CardHeader className="flex flex-row items-center justify-between gap-4">
+        <CardTitle>Timeline da Safra</CardTitle>
 
-          <button className="flex items-center gap-1 text-sm text-emerald-400 hover:text-emerald-300">
-            Detalhes
-            <ExternalLink size={14} />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-3 py-1.5 text-xs font-medium text-foreground-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Detalhes
+          <ExternalLink className="size-3.5" />
+        </button>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        <div className="flex gap-4">
-          <div className="flex flex-col items-center">
-            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-black text-xs">
-              <Check size={12} />
-            </div>
+      <CardContent>
+        <ol className="flex flex-col">
+          {steps.map((step, index) => {
+            const isLast = index === steps.length - 1;
 
-            <div className="w-px h-12 bg-zinc-700 mt-1" />
-          </div>
+            return (
+              <li key={step.label} className="flex gap-3">
+                <div className="flex flex-col items-center">
+                  <span
+                    className={cn(
+                      "flex size-5 shrink-0 items-center justify-center rounded-full",
+                      step.current
+                        ? "bg-status-blue text-white ring-4 ring-status-blue/20"
+                        : "bg-primary text-primary-foreground",
+                    )}
+                  >
+                    {step.current ? (
+                      <Sprout className="size-3" />
+                    ) : (
+                      <Check className="size-3" />
+                    )}
+                  </span>
 
-          <div>
-            <p className="font-medium">
-              Preparo do Solo
-            </p>
+                  {!isLast && <span className="w-px flex-1 bg-border" />}
+                </div>
 
-            <p className="text-sm text-zinc-500">
-              Concluído em 12 de outubro de 2023
-            </p>
-          </div>
-        </div>
+                <div className={cn(!isLast && "pb-6")}>
+                  <p className="text-sm font-medium text-foreground">
+                    {step.label}
+                  </p>
 
-        <div className="flex gap-4">
-          <div className="flex flex-col items-center">
-            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-black text-xs">
-             <Check size={12} />
-            </div>
-
-            <div className="w-px h-12 bg-zinc-700 mt-1" />
-          </div>
-
-          <div>
-            <p className="font-medium">
-              Plantio
-            </p>
-
-            <p className="text-sm text-zinc-500">
-              Concluído em 4 de novembro de 2023
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="relative flex flex-col items-center">
-            <div className="w-5 h-5 rounded-full bg-blue-500 ring-4 ring-blue-500/20 flex items-center justify-center text-white">
-              <Sprout size={12} />
-            </div>
-          </div>
-
-          <div>
-            <p className="font-medium">
-              Crescimento Vegetativo
-            </p>
-
-            <p className="text-sm text-zinc-400">
-              Etapa atual - Semana 14
-            </p>
-          </div>
-        </div>
+                  <p className="text-xs text-muted-foreground">{step.detail}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </CardContent>
     </Card>
   );

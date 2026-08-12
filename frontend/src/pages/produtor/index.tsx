@@ -1,206 +1,101 @@
 import * as React from "react";
 
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Sidebar } from "@/components/produtor/Sidebar";
+import { Topbar } from "@/components/produtor/Topbar";
+import { StatsGrid, type StatCardProps } from "@/components/produtor/StatCard";
 import { ChartSection } from "@/components/produtor/ChartSection";
 import { TimelineSection } from "@/components/produtor/TimelineSection";
 import { SoilSection } from "@/components/produtor/SoilSection";
-import { WeatherSection } from "@/components/produtor/WeatherSection";  
+import { WeatherSection } from "@/components/produtor/WeatherSection";
 import {
   TrendingUp,
   BarChart3,
   Droplets,
   CircleCheck,
   TriangleAlert,
-  CloudRain,
   Plus,
 } from "lucide-react";
 
+const stats: StatCardProps[] = [
+  {
+    label: "Produtividade Média",
+    value: "142.4",
+    unit: "sc/ha",
+    note: "12.4% vs ciclo anterior",
+    noteIcon: TrendingUp,
+    icon: TrendingUp,
+    tone: "positive",
+  },
+  {
+    label: "Variação da Produção",
+    value: "+8.2",
+    unit: "%",
+    note: "Tendência de crescimento ideal",
+    noteIcon: CircleCheck,
+    icon: BarChart3,
+    tone: "info",
+  },
+  {
+    label: "Chuva Acumulada",
+    value: "648",
+    unit: "mm",
+    note: "15% abaixo da média histórica",
+    noteIcon: TriangleAlert,
+    icon: Droplets,
+    tone: "warning",
+  },
+];
+
 export default function ProdutorDashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-
   return (
-    <div className="flex h-screen bg-[#09090b] text-zinc-200 font-sans overflow-hidden">
-      <Sidebar isOpen={isSidebarOpen} />
+    <div className="theme-dashboard flex min-h-screen bg-background font-sans text-foreground">
+      <Sidebar />
 
-      <div className="flex flex-1 flex-col h-screen overflow-y-auto">
-        <Header
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        title="Quixadá – Safra 2023/24"
-        />
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">
+          <Topbar title="Quixadá – Safra 2023/24" />
 
-        <main className="flex-1 overflow-auto p-8 bg-linear-to-br from-black via-[#090b09] to-[#06110c]">
+          <StatsGrid stats={stats} />
 
-            {/* Cards */}
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <ChartSection />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <SoilSection />
+          </div>
 
-                {/* Produtividade */}
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <TimelineSection />
 
-                <Card className="relative overflow-hidden bg-[#151d18] border-[#314238] rounded-xl">
-                    <CardHeader className="pb-2">
-                    <CardTitle className="text-base font-normal text-zinc-400">
-                        Produtividade Média
-                    </CardTitle>
+            <WeatherSection />
+          </div>
 
-                    <TrendingUp
-                        className="absolute right-5 top-5 text-emerald-400"
-                        size={19}
-                    />
-                    </CardHeader>
+          <footer className="flex flex-col items-center justify-between gap-2 border-t border-border pt-4 text-xs text-muted-foreground sm:flex-row">
+            <p>© 2026 Chuva e Safra. Inteligência para o campo.</p>
 
-                    <CardContent>
-                    <div className="flex items-end gap-2">
-                        <span className="text-4xl font-light text-zinc-200">
-                        142.4
-                        </span>
+            <nav className="flex items-center gap-4">
+              <a href="#" className="transition-colors hover:text-foreground">
+                Política de Privacidade
+              </a>
 
-                        <span className="mb-1 text-sm text-zinc-400">
-                        sc/ha
-                        </span>
-                    </div>
+              <a href="#" className="transition-colors hover:text-foreground">
+                Termos de Uso
+              </a>
 
-                    <p className="mt-3 flex items-center gap-1 text-sm text-emerald-400">
-                        ↑ 12.4% vs ciclo anterior
-                    </p>
+              <a href="#" className="transition-colors hover:text-foreground">
+                Fontes dos Dados
+              </a>
+            </nav>
+          </footer>
+        </div>
 
-                    <TrendingUp
-                        size={80}
-                        className="absolute -bottom-5 -right-3 text-white/[0.035]"
-                    />
-                    </CardContent>
-                </Card>
-
-
-                {/* Variação */}
-
-                <Card className="relative overflow-hidden bg-[#151d18] border-[#314238] rounded-xl">
-                    <CardHeader className="pb-2">
-                    <CardTitle className="text-base font-normal text-zinc-400">
-                        Variação da Produção
-                    </CardTitle>
-
-                    <BarChart3
-                        className="absolute right-5 top-5 text-blue-300"
-                        size={19}
-                    />
-                    </CardHeader>
-
-                    <CardContent>
-                    <div className="flex items-end gap-2">
-                        <span className="text-4xl font-light text-zinc-200">
-                        +8.2
-                        </span>
-
-                        <span className="mb-1 text-sm text-zinc-400">
-                        %
-                        </span>
-                    </div>
-
-                    <p className="mt-3 flex items-center gap-1 text-sm text-blue-300">
-                        <CircleCheck size={14} />
-                        Tendência de crescimento ideal
-                    </p>
-
-                    <BarChart3
-                        size={76}
-                        className="absolute -bottom-4 -right-2 text-white/[0.035]"
-                    />
-                    </CardContent>
-                </Card>
-
-
-                {/* Chuva */}
-
-                <Card className="relative overflow-hidden bg-[#151d18] border-[#314238] rounded-xl">
-                    <CardHeader className="pb-2">
-                    <CardTitle className="text-base font-normal text-zinc-400">
-                        Chuva Acumulada
-                    </CardTitle>
-
-                    <Droplets
-                        className="absolute right-5 top-5 text-amber-300"
-                        size={19}
-                    />
-                    </CardHeader>
-
-                    <CardContent>
-                    <div className="flex items-end gap-2">
-                        <span className="text-4xl font-light text-zinc-200">
-                        648
-                        </span>
-
-                        <span className="mb-1 text-sm text-zinc-400">
-                        mm
-                        </span>
-                    </div>
-
-                    <p className="mt-3 flex items-center gap-1 text-sm text-amber-300">
-                        <TriangleAlert size={14} />
-                        15% abaixo da média histórica
-                    </p>
-
-                    <CloudRain
-                        size={86}
-                        className="absolute -bottom-5 -right-3 text-white/[0.035]"
-                    />
-                    </CardContent>
-                </Card>
-
-            </div>
-
-
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
-
-                {/* Card do gráfico */}
-
-                <ChartSection />
-
-
-                {/* Card do solo */}
-
-                <SoilSection />
-                
-            </div>
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                <TimelineSection />
-
-                <WeatherSection />
-            </div>
-
-            <footer className="mt-8 border-t border-zinc-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-500">
-                <p>© 2026 Chuva e Safra. Inteligência para o campo.</p>
-
-                <div className="flex gap-6 mt-4 md:mt-0">
-                    <a href="#" className="hover:text-emerald-400 transition">
-                    Política de Privacidade
-                    </a>
-
-                    <a href="#" className="hover:text-emerald-400 transition">
-                    Termos de Uso
-                    </a>
-
-                    <a href="#" className="hover:text-emerald-400 transition">
-                    Fontes dos Dados
-                    </a>
-                </div>
-            </footer>
-
-            <button
-                className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-emerald-500 text-black shadow-lg hover:scale-110 hover:bg-emerald-400 transition-all duration-300 flex items-center justify-center"
-                >
-                <Plus size={28} />
-            </button>
-
-        </main>
-      </div>
+        <button
+          type="button"
+          aria-label="Novo registro"
+          className="fixed bottom-8 right-8 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Plus className="size-5" />
+        </button>
+      </main>
     </div>
   );
 }

@@ -4,12 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Sun,
-  CloudRain,
-  Cloud,
-  CloudSun,
-} from "lucide-react";
+import { Sun, CloudRain, Cloud, CloudSun } from "lucide-react";
 
 const metrics = [
   { label: "Vento", value: "14 km/h NE" },
@@ -19,81 +14,70 @@ const metrics = [
 ];
 
 const forecast = [
-  { day: "SEG", Icon: Sun, color: "text-yellow-400", temp: "34°" },
-  { day: "TER", Icon: Sun, color: "text-yellow-400", temp: "35°" },
-  { day: "QUA", Icon: Cloud, color: "text-zinc-400", temp: "31°" },
-  { day: "QUI", Icon: CloudSun, color: "text-amber-400", temp: "28°" },
-  { day: "SEX", Icon: CloudRain, color: "text-blue-400", temp: "27°" },
+  { day: "SEG", Icon: Sun, color: "text-status-orange", temp: "34°" },
+  { day: "TER", Icon: Sun, color: "text-status-orange", temp: "35°" },
+  { day: "QUA", Icon: Cloud, color: "text-muted-foreground", temp: "31°" },
+  { day: "QUI", Icon: CloudSun, color: "text-status-orange", temp: "28°" },
+  { day: "SEX", Icon: CloudRain, color: "text-status-blue", temp: "27°" },
 ];
 
 export function WeatherSection() {
   return (
-    <Card className="bg-[#121214] border-zinc-800 h-full">
+    <Card data-slot="weather-section">
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <CardTitle>Pulso Meteorológico</CardTitle>
 
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <CardTitle className="text-lg font-normal text-zinc-200">
-            Pulso Meteorológico
-          </CardTitle>
-
-          <span className="rounded-md bg-amber-500/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-400">
-            Alerta: umidade baixa
-          </span>
-        </div>
+        <span className="rounded-lg border border-status-orange/30 bg-status-orange/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-status-orange">
+          Alerta: umidade baixa
+        </span>
       </CardHeader>
 
-      <CardContent>
-
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
-
+      <CardContent className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
           {/* Temperatura atual */}
 
           <div className="shrink-0">
-            <p className="text-6xl font-light leading-none text-zinc-100">
+            <p className="text-4xl font-semibold leading-none text-foreground">
               32°
             </p>
 
-            <p className="mt-3 text-sm text-zinc-400">
+            <p className="mt-2 text-sm text-foreground-subtle">
               Parcialmente nublado
             </p>
           </div>
 
           {/* Indicadores */}
 
-          <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-6">
+          <dl className="grid flex-1 grid-cols-2 gap-x-6 gap-y-4">
             {metrics.map((metric) => (
               <div key={metric.label}>
-                <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                   {metric.label}
-                </p>
+                </dt>
 
-                <p className="mt-1.5 text-sm text-zinc-200">
+                <dd className="mt-1 text-sm font-medium text-foreground">
                   {metric.value}
-                </p>
+                </dd>
               </div>
             ))}
-          </div>
-
+          </dl>
         </div>
 
         {/* Previsão da semana */}
 
-        <div className="mt-8 grid grid-cols-5 border-t border-zinc-800 pt-5 text-center">
+        <div className="grid grid-cols-5 border-t border-border pt-4 text-center">
           {forecast.map(({ day, Icon, color, temp }) => (
             <div key={day}>
-              <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 {day}
               </p>
 
-              <Icon className={`mx-auto mt-2 ${color}`} size={18} />
+              <Icon className={`mx-auto mt-2 size-4 ${color}`} />
 
-              <p className="mt-2 text-xs text-zinc-300">
-                {temp}
-              </p>
+              <p className="mt-2 text-xs text-foreground-subtle">{temp}</p>
             </div>
           ))}
         </div>
-
       </CardContent>
     </Card>
   );
