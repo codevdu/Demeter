@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { EyeOff } from "lucide-react";
 import {
-  LockKeyholeOpen,
   Mail,
   Lock,
   Eye,
@@ -16,9 +16,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toglle";
+import Link from "next/link";
+import { getMe, isValidProfile, loginUser, ROLE_REDIRECT } from "@/services/auth-service";
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [submitError, setSubmitError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const messages = [
     "Monitore dados climáticos em tempo real",
     "Acompanhe indicadores agrícolas da sua região",
@@ -36,6 +46,45 @@ export default function LoginForm() {
 
     return () => clearInterval(interval);
   }, [messages.length]);
+
+  const handleSubmit = async (
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
+  setSubmitError("");
+
+  if (!email || !password) {
+    setSubmitError("Preencha e-mail e senha.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // login só autentica e seta o cookie httpOnly — não usamos o retorno dele
+    await loginUser({ email, password });
+
+    // busca o perfil real direto da fonte da verdade
+    const me = await getMe();
+
+    if (!me || !isValidProfile(me.profile)) {
+      setSubmitError(
+        "Não foi possível validar seu perfil de acesso. Contate o suporte."
+      );
+      return;
+    }
+
+    router.push(ROLE_REDIRECT[me.profile]);
+  } catch (err) {
+    setSubmitError(
+      err instanceof Error
+        ? err.message
+        : "Erro inesperado. Tente novamente."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex h-screen">
@@ -94,7 +143,7 @@ export default function LoginForm() {
           <ThemeToggle />
         </div>
 
-        <div className="w-full max-w-md lg:max-w-[550px] mt-12 lg:mt-0">
+        <div className="w-full max-w-md lg:max-w-137.5 mt-12 lg:mt-0">
           <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl dark:text-white">
             Seja bem-vindo
           </h1>
@@ -103,7 +152,7 @@ export default function LoginForm() {
             Entre com seus dados para acessar a plataforma.
           </p>
 
-          <form className="mt-8 space-y-4 sm:space-y-5">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4 sm:space-y-5">
             {/* Email */}
             <div className="space-y-2">
               <label className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
@@ -115,7 +164,10 @@ export default function LoginForm() {
 
                 <Input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="email@empresa.com"
+                  autoComplete="email"
                   className="mt-1 h-10 border-zinc-300 bg-white pl-10 text-sm text-zinc-900 placeholder:text-zinc-500 focus-visible:border-emerald-500 focus-visible:ring-emerald-500 dark:border-zinc-700 dark:bg-[#161D19] dark:text-white"
                 />
               </div>
@@ -132,7 +184,10 @@ export default function LoginForm() {
 
                 <Input
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   className="mt-1 h-10 border-zinc-300 bg-white pl-10 pr-10 text-sm text-zinc-900 placeholder:text-zinc-500 focus-visible:border-emerald-500 focus-visible:ring-emerald-500 dark:border-zinc-700 dark:bg-[#161D19] dark:text-white"
                 />
 
@@ -150,25 +205,19 @@ export default function LoginForm() {
               </div>
             </div>
 
-            {/* Região */}
-            <div className="space-y-2">
-              <label className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
-                Região
-              </label>
-
-              <select className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none transition-colors focus:border-emerald-500 dark:border-zinc-700 dark:bg-[#161D19] dark:text-white">
-                <option value="">Selecione uma região</option>
-                <option value="norte">Norte</option>
-                <option value="nordeste">Nordeste</option>
-                <option value="centro-oeste">Centro-Oeste</option>
-                <option value="sudeste">Sudeste</option>
-                <option value="sul">Sul</option>
-              </select>
-            </div>
+            {submitError && (
+              <p className="text-center text-xs text-red-500">
+                {submitError}
+              </p>
+            )}
 
             {/* Botão */}
-            <Button className="mt-5 h-11 w-full bg-emerald-700 text-sm font-semibold text-white hover:bg-emerald-600 transition duration-300">
-              Entrar
+            <Button
+              type="submit"
+              disabled={loading}
+              className="mt-5 h-11 w-full bg-emerald-700 text-sm font-semibold text-white hover:bg-emerald-600 transition duration-300 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Entrando..." : "Entrar"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
@@ -206,14 +255,14 @@ export default function LoginForm() {
 
             <p className="text-center text-xs text-zinc-600 dark:text-zinc-400">
               Não possui uma conta?{" "}
-              <a href="/cadastro">
+              <Link href="/register">
                 <button
-                type="button"
-                className="font-medium text-emerald-500 hover:text-emerald-400 cursor-pointer"
-              >
-                Criar uma
-              </button>
-              </a>
+                  type="button"
+                  className="font-medium text-emerald-500 hover:text-emerald-400 cursor-pointer"
+                >
+                  Criar uma
+                </button>
+              </Link>
             </p>
           </form>
 
