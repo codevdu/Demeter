@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { TokenPayload } from '../@types/express.js';
+import { Profile } from '@prisma/client';
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
@@ -26,3 +27,10 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     return res.status(401).json({ error: 'Token inválido ou expirado' });
   }
 }
+
+export const requireGestor = (req: Request, res: Response, next: NextFunction) => {
+  if (req.user?.profile !== Profile.GESTOR) {
+    return res.status(403).json({ error: 'Acesso negado. Apenas gestores podem realizar esta ação.' });
+  }
+  return next();
+};

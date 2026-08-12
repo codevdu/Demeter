@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { DashboardService } from '../services/dashboard.service.js';
+import { prisma } from '../prisma/index.js'
+import { UserRepository } from '../repositories/user.repository.js';
 
 export class DashboardController {
   private dashboardService: DashboardService;
 
   constructor() {
-    this.dashboardService = new DashboardService();
+    const userRepository = new UserRepository();
+    this.dashboardService = new DashboardService(userRepository);
   }
 
   async getDashboardData(req: Request, res: Response) {

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Profile } from '@prisma/client';
 import { TokenPayload } from '../@types/express.js';
+import { UserRepository } from '../repositories/user.repository.js';
 
 export interface DashboardQueryParams {
   cultura?: string;
@@ -11,12 +12,15 @@ export interface DashboardQueryParams {
 
 interface DashboardScope {
   perfil: string;
-  municipios: string[];
+  municipios?: string[];
+  coordinates?: string | null;
 }
 
 export class DashboardService {
   private readonly dataServiceUrl =
     process.env.DATA_SERVICE_URL ?? 'http://localhost:8000';
+  
+  constructor(private userRepository: UserRepository){}
 
   async getDashboardData(
     user: TokenPayload,
@@ -29,18 +33,25 @@ export class DashboardService {
       municipiosRequested,
     } = query;
 
-    const scope = this.resolveScope(user, municipiosRequested);
+    const scope = await this.resolveScope(user, municipiosRequested);
 
-    const params = {
+    const params: Record<string, any> = {
       perfil: scope.perfil,
       cultura,
       de,
       ate,
-      municipios: scope.municipios.join(','),
     };
 
+    if (scope.municipios && scope.municipios.length > 0) {
+      params.municipios = scope.municipios.join(',');
+    }
+
+    if (scope.coordinates) {
+      params.coordinates = scope.coordinates;
+    }
+
     try {
-      const { data } = await axios.get(`${this.dataServiceUrl}/grafico`, { // integrar a análise de dados
+      const { data } = await axios.get(`${this.dataServiceUrl}/grafico`, {
         params,
       });
 
@@ -55,24 +66,21 @@ export class DashboardService {
     }
   }
 
-  private resolveScope(
+  private async resolveScope(
     user: TokenPayload,
     municipiosRequested?: string,
-  ): DashboardScope {
+  ): Promise<DashboardScope> {
     const perfil = user.profile.toLowerCase();
 
     switch (user.profile) {
       case Profile.PRODUTOR:
         return {
           perfil,
-          municipios: this.resolveProdutor(user),
+          municipios: await this.resolveProdutor(user.id),
         };
 
       case Profile.TECNICO:
-        return {
-          perfil,
-          municipios: this.resolveTecnico(user, municipiosRequested),
-        };
+        return await this.resolveTecnicoScope(user.id, perfil, municipiosRequested);
 
       case Profile.GESTOR:
         return {
@@ -85,35 +93,42 @@ export class DashboardService {
     }
   }
 
-  private resolveProdutor(user: TokenPayload): string[] {
-    if (!user.localId) {
-      throw new Error('Produtor não possui município associado');
+  private async resolveProdutor(userId: string): Promise<string[]> {
+    const user = await this.userRepository.findById(userId)
+
+    if (!user) {
+      throw new Error('Usuário não encontrado');
     }
 
-    return [user.localId];
+    const municipalitySet = new Set<number>();
+
+    user.carProperties.forEach((property) => {
+      if (property.municipalityId) {
+        municipalitySet.add(property.municipalityId);
+      }
+    });
+
+    if (municipalitySet.size === 0) {
+      throw new Error('Produtor não possui nenhum imóvel/município associado.');
+    }
+
+    return Array.from(municipalitySet).map(String);
   }
 
-  private resolveTecnico(
-    user: TokenPayload,
+  private async resolveTecnicoScope(
+    userId: string,
+    perfil: string,
     municipiosRequested?: string,
-  ): string[] {
-    const allowedLocals = user.allowedLocals ?? [];
-
-    if (allowedLocals.length === 0) {
-      throw new Error('Técnico sem municípios autorizados');
-    }
-
-    if (!municipiosRequested) {
-      return allowedLocals;
-    }
+  ): Promise<DashboardScope> {
+    const dbUser = await this.userRepository.findById(userId)
 
     const requested = this.parseMunicipios(municipiosRequested);
 
-    const filtered = requested.filter((municipio) =>
-      allowedLocals.includes(municipio),
-    );
-
-    return filtered.length > 0 ? filtered : allowedLocals;
+    return {
+      perfil,
+      coordinates: dbUser?.coordinates || null,
+      municipios: requested,
+    };
   }
 
   private parseMunicipios(municipios?: string): string[] {

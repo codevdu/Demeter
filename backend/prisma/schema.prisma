@@ -8,10 +8,6 @@ datasource db {
   schemas  = ["demeter"]
 }
 
-// ----------------------------------------------------------------
-// Autenticação e perfis
-// ----------------------------------------------------------------
-
 enum Profile {
   PRODUTOR
   TECNICO
@@ -20,54 +16,29 @@ enum Profile {
 }
 
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  passwordHash    String
+  id              String      @id @default(uuid())
   name            String
-  profile         Profile
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  cpfCnpj         String      @unique
+  email           String      @unique
+  passwordHash    String
+  profile         Profile        @default(PRODUTOR)
 
-  // Só preenchido quando profile = PRODUTOR — um produtor pertence
+  coordinates     String?      
+  state           String?  
 
-  localId    String?
-  local      Local? @relation("ProdutorMunicipio", fields: [localId], references: [id])
+  carProperties   CarProperty[]
 
-  // Só populado quando profile = TECNICO — vira o array
-  // `allowedLocals` assinado no JWT.
-  allowedLocals localUser[]
-
-  @@index([profile])
   @@schema("demeter")
 }
 
-// Junção N:N entre técnico e municípios que ele tem permissão de ver.
-// É essa tabela que o graficoProxy.ts consulta (via req.usuario)
+model CarProperty {
+  id              String   @id @default(uuid())
+  carReceipt      String   @unique 
+  municipality    String
+  municipalityId  Int    
 
-model localUser {
-  userId   String
-  localId String
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
 
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  local   Local  @relation(fields: [localId], references: [id], onDelete: Cascade)
-
-  created_at DateTime @default(now())
-
-  @@id([userId, localId])
-  @@schema("demeter")
-}
-
-// ----------------------------------------------------------------
-// Referência mínima ao Municipio
-// ----------------------------------------------------------------
-
-model Local {
-  id         String @id @default(cuid())
-  IBGE_id    String @unique
-  name       String
-  uf         String @default("CE")
-
-  producers    User[]       @relation("ProdutorMunicipio")
-  technicians  localUser[]
   @@schema("demeter")
 }

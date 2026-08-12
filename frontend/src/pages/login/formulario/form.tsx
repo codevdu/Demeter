@@ -206,12 +206,14 @@ export default function LoginForm() {
 
             <p className="text-center text-xs text-zinc-600 dark:text-zinc-400">
               Não possui uma conta?{" "}
-              <button
+              <a href="/cadastro">
+                <button
                 type="button"
-                className="font-medium text-emerald-500 hover:text-emerald-400"
+                className="font-medium text-emerald-500 hover:text-emerald-400 cursor-pointer"
               >
                 Criar uma
               </button>
+              </a>
             </p>
           </form>
 
