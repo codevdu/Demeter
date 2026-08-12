@@ -3,6 +3,8 @@ import { AxiosError } from "axios";
 
 export type Profile = "PRODUTOR" | "TECNICO" | "GESTOR";
 
+// ---------- Registro ----------
+
 export interface RegisterPayload {
   email: string;
   password: string;
@@ -15,35 +17,8 @@ export interface RegisterPayload {
   profile?: Profile;
 }
 
-// o back não devolve mais token — ele fica só no cookie httpOnly
 export interface RegisterResponse {
-  perfil: Profile;
-}
-
-interface ZodIssue {
-  message: string;
-  path: (string | number)[];
-}
-
-interface ApiErrorResponse {
-  error?: string;
-  erro?: string;
-  errors?: ZodIssue[];
-}
-
-function extractErrorMessage(err: unknown): string {
-  const error = err as AxiosError<ApiErrorResponse>;
-  const data = error.response?.data;
-
-  if (data?.errors?.length) {
-    return data.errors.map((issue) => issue.message).join(" ");
-  }
-
-  return (
-    data?.error ??
-    data?.erro ??
-    "Não foi possível concluir o cadastro. Tente novamente."
-  );
+  profile: Profile;
 }
 
 export async function registerUser(
@@ -58,4 +33,79 @@ export async function registerUser(
   } catch (err) {
     throw new Error(extractErrorMessage(err));
   }
+}
+
+// ---------- Login ----------
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  profile: Profile;
+}
+
+export async function loginUser(
+  payload: LoginPayload
+): Promise<LoginResponse> {
+  try {
+    const { data } = await api.post<LoginResponse>("/auth/login", payload);
+    return data;
+  } catch (err) {
+    throw new Error(extractErrorMessage(err));
+  }
+}
+
+// ---------- /me ----------
+
+export interface MeResponse {
+  id: string;
+  name: string;
+  email: string;
+  profile: Profile;
+  municipalityId: number | null;
+  municipality: string | null;
+}
+
+export async function getMe(): Promise<MeResponse | null> {
+  try {
+    const { data } = await api.get<MeResponse>("/auth/me");
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+// ---------- Redirect por role ----------
+
+export const ROLE_REDIRECT: Record<Profile, string> = {
+  PRODUTOR: "/produtor",
+  TECNICO: "/tecnico",
+  GESTOR: "/gestor",
+};
+
+export function isValidProfile(value: unknown): value is Profile {
+  return value === "PRODUTOR" || value === "TECNICO" || value === "GESTOR";
+}
+
+interface ZodIssue {
+  message: string;
+  path: (string | number)[];
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  errors?: ZodIssue[];
+}
+
+function extractErrorMessage(err: unknown): string {
+  const error = err as AxiosError<ApiErrorResponse>;
+  const data = error.response?.data;
+
+  if (data?.errors?.length) {
+    return data.errors.map((issue) => issue.message).join(" ");
+  }
+
+  return data?.error ?? "Não foi possível concluir a operação. Tente novamente.";
 }

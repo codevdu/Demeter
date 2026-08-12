@@ -1,36 +1,27 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { TokenPayload } from '../@types/express.js';
-import { Profile } from '@prisma/client';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { TokenPayload } from "../@types/express.js";
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
-  if (!authHeader) {
-    return res.status(401).json({ error: 'Token não fornecido' });
+export function authMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return res.status(401).json({ error: "Não autenticado." });
   }
-
-  const parts = authHeader.split(' ');
-
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
-    return res.status(401).json({ error: 'Formato do token inválido' });
-  }
-
-  const token = parts[1];
 
   try {
-    const secret = process.env.JWT_SECRET || 'default_secret';
-    const decoded = jwt.verify(token, secret) as TokenPayload;
-    req.user = decoded;
+    const payload = jwt.verify(token, JWT_SECRET) as TokenPayload;
+    req.user = payload;
     return next();
-  } catch (error) {
-    return res.status(401).json({ error: 'Token inválido ou expirado' });
+  } catch (err) {
+    console.log("jwt.verify falhou:", err);
+    return res.status(401).json({ error: "Sessão expirada ou inválida." });
   }
 }
-
-export const requireGestor = (req: Request, res: Response, next: NextFunction) => {
-  if (req.user?.profile !== Profile.GESTOR) {
-    return res.status(403).json({ error: 'Acesso negado. Apenas gestores podem realizar esta ação.' });
-  }
-  return next();
-};

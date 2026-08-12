@@ -44,8 +44,8 @@ export class AuthController {
       const result: any = await this.authService.register(parsedData);
       const { token, ...usuario } = result;
 
-      const resBuilder = res.status(201).json(usuario);
-      return token ? resBuilder.cookie('token', token, COOKIE_OPTIONS) : resBuilder;
+      const resBuilder = token ? res.cookie('token', token, COOKIE_OPTIONS) : res;
+      return resBuilder.status(201).json(usuario);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ errors: error.issues });
@@ -65,8 +65,8 @@ export class AuthController {
       const result: any = await this.authService.login(parsedData);
       const { token, ...usuario } = result;
 
-      const resBuilder = res.status(200).json(usuario);
-      return token ? resBuilder.cookie('token', token, COOKIE_OPTIONS) : resBuilder;
+      const resBuilder = token ? res.cookie('token', token, COOKIE_OPTIONS) : res;
+      return resBuilder.status(200).json(usuario);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ errors: error.issues });
