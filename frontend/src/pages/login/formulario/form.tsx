@@ -8,8 +8,6 @@ import {
   Lock,
   Eye,
   ArrowRight,
-  Globe,
-  Building2,
   Tractor,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -64,7 +62,6 @@ export default function LoginForm() {
     // login só autentica e seta o cookie httpOnly — não usamos o retorno dele
     await loginUser({ email, password });
 
-    // busca o perfil real direto da fonte da verdade
     const me = await getMe();
 
     if (!me || !isValidProfile(me.profile)) {
@@ -221,41 +218,9 @@ export default function LoginForm() {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
-            {/* Divisor */}
-            <div className="flex items-center gap-3 pt-1">
-              <div className="h-px flex-1 bg-zinc-300 dark:bg-zinc-700" />
-
-              <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-                Ou continue com
-              </span>
-
-              <div className="h-px flex-1 bg-zinc-300 dark:bg-zinc-700" />
-            </div>
-
-            {/* Login Social */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="h-10 border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:hover:bg-zinc-900"
-              >
-                <Globe className="mr-2 h-4 w-4" />
-                Google
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="h-10 border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:hover:bg-zinc-900"
-              >
-                <Building2 className="mr-2 h-4 w-4" />
-                SSO
-              </Button>
-            </div>
-
             <p className="text-center text-xs text-zinc-600 dark:text-zinc-400">
               Não possui uma conta?{" "}
-              <Link href="/register">
+              <Link href="/cadastro">
                 <button
                   type="button"
                   className="font-medium text-emerald-500 hover:text-emerald-400 cursor-pointer"
@@ -266,9 +231,9 @@ export default function LoginForm() {
             </p>
           </form>
 
-          <div className="mt-1 flex justify-center text-center text-[11px] text-zinc-500 lg:mt-14 lg:justify-start">
+          {/* <div className="mt-1 flex justify-center text-center text-[11px] text-zinc-500 lg:mt-14 lg:justify-start">
             <span>© 2026 Deméter Chuva & Safra</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

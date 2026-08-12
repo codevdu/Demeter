@@ -19,7 +19,7 @@ import {
 
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { ProtectedRoute } from "@/components/auth/protected-route";
+import { GestorRestriction } from "@/components/auth/role.guard";
 import { ErrorFallback } from "@/components/ui/error-fallback";
 import { mockGestorData } from "./gestor-mock";
 
@@ -48,7 +48,7 @@ export default function GestorDashboard() {
   }, []);
 
   return (
-    <ProtectedRoute>
+    <GestorRestriction>
       {hasError ? (
         <div className="flex h-screen w-full items-center justify-center bg-[#09090b]">
           <ErrorFallback onRetry={fetchData} />
@@ -254,6 +254,6 @@ export default function GestorDashboard() {
           </div>
         </div>
       )}
-    </ProtectedRoute>
+    </GestorRestriction>
   );
 }
