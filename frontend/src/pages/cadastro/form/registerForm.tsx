@@ -146,8 +146,7 @@ export default function RegisterForm() {
         password,
       });
 
-      // nada de localStorage — o cookie httpOnly já foi setado pelo back
-      router.push("/dashboard");
+      router.push("/produtor");
     } catch (err) {
       setSubmitError(
         err instanceof Error

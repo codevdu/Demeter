@@ -67,7 +67,7 @@ export class AuthService {
         `${this.apiBaseUrl}/api-sicar-demonstrativo/v1/${primeiroCodigo}`,
         configHeaders
       );
-      
+        
       const resultData = primeiroImovelRes.data?.result?.[0] || primeiroImovelRes.data?.dados || primeiroImovelRes.data;
       primeiroDetalhamento = resultData;
 
