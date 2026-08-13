@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Profile } from '@prisma/client';
-import { TokenPayload } from '../@types/express.js';
 import { UserRepository } from '../repositories/user.repository.js';
 
 export interface DashboardQueryParams {
@@ -8,6 +7,7 @@ export interface DashboardQueryParams {
   de?: string;
   ate?: string;
   municipiosRequested?: string;
+  requestedProfile?: string;
 }
 
 interface DashboardScope {
@@ -23,7 +23,7 @@ export class DashboardService {
   constructor(private userRepository: UserRepository){}
 
   async getDashboardData(
-    user: TokenPayload,
+    userId: string,
     query: DashboardQueryParams,
   ) {
     const {
@@ -31,9 +31,16 @@ export class DashboardService {
       de = '2015',
       ate = '2022',
       municipiosRequested,
+      requestedProfile,
     } = query;
 
-    const scope = await this.resolveScope(user, municipiosRequested);
+    const dbUser = await this.userRepository.findById(userId);
+
+    if (!dbUser) {
+      throw new Error('Usuário não encontrado.');
+    }
+
+    const scope = await this.resolveScope(dbUser, municipiosRequested, requestedProfile);
 
     const params: Record<string, any> = {
       perfil: scope.perfil,
@@ -60,75 +67,62 @@ export class DashboardService {
         ...data,
       };
     } catch (error) {
-      throw new Error(
-        'Falha ao consultar o serviço de dashboard.',
-      );
+      throw new Error('Falha ao consultar o serviço de dashboard.');
     }
   }
 
   private async resolveScope(
-    user: TokenPayload,
+    user: any,
     municipiosRequested?: string,
+    requestedProfile?: string,
   ): Promise<DashboardScope> {
-    const perfil = user.profile.toLowerCase();
+    
+    const targetProfile = requestedProfile?.toUpperCase() || user.profile;
 
-    switch (user.profile) {
-      case Profile.PRODUTOR:
-        return {
-          perfil,
-          municipios: await this.resolveProdutor(user.id),
-        };
+    const isAllowedTecnico =
+      targetProfile === Profile.TECNICO &&
+      (user.profile === Profile.TECNICO || user.profile === Profile.GESTOR || user.isTechnician);
 
-      case Profile.TECNICO:
-        return await this.resolveTecnicoScope(user.id, perfil, municipiosRequested);
-
-      case Profile.GESTOR:
-        return {
-          perfil,
-          municipios: this.parseMunicipios(municipiosRequested),
-        };
-
-      default:
-        throw new Error('Perfil não suportado');
+    
+    if (isAllowedTecnico) {
+      return {
+        perfil: 'tecnico',
+        coordinates: user.coordinates || null,
+        municipios: this.parseMunicipios(municipiosRequested),
+      };
     }
+
+    if (user.profile === Profile.GESTOR && targetProfile === Profile.GESTOR) {
+      return {
+        perfil: 'gestor',
+        municipios: this.parseMunicipios(municipiosRequested),
+      };
+    }
+
+    return {
+      perfil: 'produtor',
+      municipios: this.extractProdutorMunicipios(user),
+    };
   }
 
-  private async resolveProdutor(userId: string): Promise<string[]> {
-    const user = await this.userRepository.findById(userId)
-
-    if (!user) {
-      throw new Error('Usuário não encontrado');
+  private extractProdutorMunicipios(user: any): string[] {
+    if (!user.carProperties || user.carProperties.length === 0) {
+      throw new Error('Produtor não possui nenhum imóvel/município associado.');
     }
 
     const municipalitySet = new Set<number>();
 
-    user.carProperties.forEach((property) => {
+    user.carProperties.forEach((property: any) => {
       if (property.municipalityId) {
         municipalitySet.add(property.municipalityId);
       }
     });
 
     if (municipalitySet.size === 0) {
-      throw new Error('Produtor não possui nenhum imóvel/município associado.');
+      throw new Error('Produtor não possui imóveis com municípios válidos.');
     }
 
     return Array.from(municipalitySet).map(String);
-  }
-
-  private async resolveTecnicoScope(
-    userId: string,
-    perfil: string,
-    municipiosRequested?: string,
-  ): Promise<DashboardScope> {
-    const dbUser = await this.userRepository.findById(userId)
-
-    const requested = this.parseMunicipios(municipiosRequested);
-
-    return {
-      perfil,
-      coordinates: dbUser?.coordinates || null,
-      municipios: requested,
-    };
   }
 
   private parseMunicipios(municipios?: string): string[] {
