@@ -1,5 +1,4 @@
-import * as React from "react";
-import { Search, Bell, Sprout } from "lucide-react";
+import { Search } from "lucide-react";
 
 interface TopbarProps {
   title: string;
@@ -26,22 +25,6 @@ export function Topbar({ title }: TopbarProps) {
           />
         </label>
 
-        <button
-          type="button"
-          aria-label="Notificações"
-          className="relative flex size-9 items-center justify-center rounded-lg border border-border bg-surface text-foreground-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Bell className="size-4" />
-
-          <span className="absolute right-2 top-2 size-1.5 rounded-full bg-status-orange" />
-        </button>
-
-        <div
-          className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground"
-          aria-hidden
-        >
-          <Sprout className="size-4" />
-        </div>
       </div>
     </header>
   );
