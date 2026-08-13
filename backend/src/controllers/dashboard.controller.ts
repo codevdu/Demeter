@@ -19,13 +19,14 @@ export class DashboardController {
         return res.status(401).json({ error: 'Usuário não autenticado' });
       }
 
-      const { cultura, de, ate, municipios } = req.query;
+      const { cultura, de, ate, municipios, perfil } = req.query;
 
-      const result = await this.dashboardService.getDashboardData(user, {
+      const result = await this.dashboardService.getDashboardData(user.id, {
         cultura: cultura ? String(cultura) : undefined,
         de: de ? String(de) : undefined,
         ate: ate ? String(ate) : undefined,
         municipiosRequested: municipios ? String(municipios) : undefined,
+        requestedProfile: perfil ? String(perfil) : undefined,
       });
 
       return res.json(result);
