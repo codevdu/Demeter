@@ -5,7 +5,7 @@ import { ChartTooltip } from "./charts/tooltip";
 import XAxis from "./charts/x-axis";
 
 interface ProductivityProps {
-  data: { date: string; productividade: number; chuva: number }[];
+  data: { date: string; produtividade: number; chuva: number }[];
   isLoading?: boolean;
 }
 
@@ -30,7 +30,7 @@ export default function Productivity({ data, isLoading }: ProductivityProps) {
     <AreaChart data={data}>
       <Grid horizontal />
       <Area
-        dataKey="productividade"
+        dataKey="produtividade"
         fill="#22c55e"
         fillOpacity={0.3}
       />
