@@ -72,7 +72,7 @@ export interface MeResponse {
   name: string;
   email: string;
   profile: Profile;
-  carProperties: IcarResponse
+  carProperties: IcarResponse[]
 }
 
 export async function getMe(): Promise<MeResponse | null> {

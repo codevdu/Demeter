@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../repositories/user.repository.js";
 
+export interface Icar {
+  id: string;
+  carReceipt: string
+  municipality: string
+  municipalityId: string
+  userId: string
+}
+
 export class MeController {
   private userRepository: UserRepository;
 
@@ -17,7 +25,7 @@ export class MeController {
     }
 
     const userData = usuario as any;
-    const userCar = car?.carProperties as any;
+    const userCar = car?.carProperties as Icar[]
 
     return res.status(200).json({
       id: userData.id,
