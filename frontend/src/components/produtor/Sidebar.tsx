@@ -58,7 +58,7 @@ export function Sidebar() {
         >
           {isOpen ? (
             <div>
-              <p className="text-base font-semibold text-primary">Chuva e Safra</p>
+              <p className="text-base font-semibold text-primary">Deméter</p>
               <p className="text-xs text-muted-foreground">Inteligência de Precisão</p>
             </div>
           ) : (
