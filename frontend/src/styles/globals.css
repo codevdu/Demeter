@@ -41,6 +41,7 @@
   --surface-raised: oklch(0.97 0 0);
   --foreground-subtle: oklch(0.45 0 0);
   --status-blue: #3b82f6;
+  --status-green: #22c55e;
   --status-orange: #d97706;
   --status-purple: #a855f7;
   --chart-background: oklch(1 0 0);
@@ -233,6 +234,7 @@ body {
   --destructive: #ef4444;
 
   --status-blue: #3b82f6;
+  --status-green: #22c55e;
   --status-yellow: #eab308;
   --status-orange: #d97706;
   --status-purple: #a855f7;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Profile } from "@/services/auth-service";
 import { NotAllowedPage } from "./not-allowed";
+import ClassicLoader from "../mvpblocks/classic-loader";
 
 interface RoleGuardProps {
   allowedProfiles: Profile[];
@@ -26,7 +27,7 @@ export function RoleGuard({ allowedProfiles, children }: RoleGuardProps) {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+        <ClassicLoader/>
       </div>
     );
   }

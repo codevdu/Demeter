@@ -2,9 +2,10 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import {
   LayoutDashboard,
-  Layers,
   CloudRain,
   Tractor,
   Settings,
@@ -12,18 +13,25 @@ import {
   Radio,
   ArrowRight,
   Menu,
-  Sprout,
+  Map,
+  type LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Visão Geral", icon: LayoutDashboard },
-  { label: "Solos", icon: Layers },
-  { label: "Previsão", icon: CloudRain },
-  { label: "Manejo de Safra", icon: Tractor },
-  { label: "Configurações", icon: Settings },
-] as const;
+interface NavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+const navItems: NavItem[] = [
+  { href: "/produtor", label: "Visão Geral", icon: LayoutDashboard },
+  { href: "/produtor/mapas", label: "Mapas", icon: Map },
+  { href: "/produtor/previsao", label: "Previsão", icon: CloudRain },
+  { href: "/produtor/manejo-safra", label: "Manejo de Safra", icon: Tractor },
+  { href: "/produtor/configuracoes", label: "Configurações", icon: Settings },
+];
 
 const talhoes = [
   { label: "Setor A-24", color: "bg-primary" },
@@ -38,7 +46,7 @@ const supportItems = [
 ] as const;
 
 export function Sidebar() {
-  const [active, setActive] = React.useState<string>("Visão Geral");
+  const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
@@ -58,11 +66,11 @@ export function Sidebar() {
         >
           {isOpen ? (
             <div>
-              <p className="text-base font-semibold text-primary">Chuva e Safra</p>
+              <p className="text-base font-semibold text-primary">Deméter</p>
               <p className="text-xs text-muted-foreground">Inteligência de Precisão</p>
             </div>
           ) : (
-            <Sprout className="size-6 text-primary" />
+            <p></p>
           )}
 
           <button
@@ -79,26 +87,27 @@ export function Sidebar() {
         </div>
 
         <nav aria-label="Navegação principal" className="flex flex-col gap-0.5">
-          {navItems.map(({ label, icon: Icon }) => {
-            const isActive = active === label;
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = router.pathname === item.href;
 
             return (
-              <button
-                key={label}
-                type="button"
-                onClick={() => setActive(label)}
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 data-active={isActive ? "" : undefined}
-                title={!isOpen ? label : undefined}
+                title={!isOpen ? item.label : undefined}
                 className={cn(
                   "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-foreground-subtle transition-colors",
                   !isOpen && "justify-center px-0",
                   "hover:bg-muted hover:text-foreground",
-                  "data-active:bg-status-blue data-active:text-white data-active:hover:bg-status-blue",
+                  "data-active:bg-[#22c55e]/30 data-active:text-white data-active:hover:bg-[#22c55e]/20",
                 )}
               >
                 <Icon className="size-4 shrink-0" />
-                {isOpen && label}
-              </button>
+                {isOpen && item.label}
+              </Link>
             );
           })}
         </nav>
@@ -135,13 +144,13 @@ export function Sidebar() {
               Monitoramento de umidade de alta precisão para o seu setor norte.
             </p>
 
-            <a
-              href="#"
+            <Link
+              href="/produtor/mapas"
               className="mt-2.5 inline-flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:text-foreground"
             >
               Ver dados
               <ArrowRight className="size-3" />
-            </a>
+            </Link>
           </div>
         )}
       </div>
