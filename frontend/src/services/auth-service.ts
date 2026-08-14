@@ -17,6 +17,14 @@ export interface RegisterPayload {
   profile?: Profile;
 }
 
+export interface IcarResponse {
+  id: string;
+  carReceipt: string;
+  municipality: string;
+  municipalityId: string
+  userId: string
+}
+
 export interface RegisterResponse {
   profile: Profile;
 }
@@ -64,8 +72,7 @@ export interface MeResponse {
   name: string;
   email: string;
   profile: Profile;
-  municipalityId: number | null;
-  municipality: string | null;
+  carProperties: IcarResponse
 }
 
 export async function getMe(): Promise<MeResponse | null> {

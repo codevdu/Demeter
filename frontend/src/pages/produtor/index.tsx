@@ -1,18 +1,13 @@
-import * as React from "react";
-
 import { Sidebar } from "@/components/produtor/Sidebar";
 import { StatsGrid, type StatCardProps } from "@/components/produtor/StatCard";
 import { ChartSection } from "@/components/produtor/ChartSection";
-import { TimelineSection } from "@/components/produtor/TimelineSection";
 import { SoilSection } from "@/components/produtor/SoilSection";
-import { WeatherSection } from "@/components/produtor/WeatherSection";
 import {
   TrendingUp,
   BarChart3,
   Droplets,
   CircleCheck,
   TriangleAlert,
-  Plus,
 } from "lucide-react";
 import { ProdutorRestriction } from "@/components/auth/role.guard";
 
@@ -62,10 +57,8 @@ export default function ProdutorDashboard() {
               <SoilSection />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <TimelineSection />
-
-              <WeatherSection />
+            <div className="grid grid-cols-1 gap-6">
+              {/* adicionar componente de mapa */}
             </div>
 
             <footer className="flex flex-col items-center justify-between gap-2 border-t border-border pt-4 text-xs text-muted-foreground sm:flex-row">
@@ -86,14 +79,6 @@ export default function ProdutorDashboard() {
               </nav>
             </footer>
           </div>
-
-          <button
-            type="button"
-            aria-label="Novo registro"
-            className="fixed bottom-8 right-8 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Plus className="size-5" />
-          </button>
         </main>
       </div>
     </ProdutorRestriction>
