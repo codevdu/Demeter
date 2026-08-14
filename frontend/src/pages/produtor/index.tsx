@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { getDashboardData } from "@/services/dashboard-service";
 import { Sidebar } from "@/components/produtor/Sidebar";
 import { Topbar } from "@/components/produtor/Topbar";
 import { StatsGrid, type StatCardProps } from "@/components/produtor/StatCard";
@@ -16,10 +17,33 @@ import {
   Plus,
 } from "lucide-react";
 
-const stats: StatCardProps[] = [
+export default function ProdutorDashboard() {
+
+  const [kpis, setKpis] = React.useState({
+  produtividade_media: 0,
+  variacao_producao: 0,
+  chuva_acumulada: 0,
+  });
+
+  React.useEffect(() => {
+  async function carregarDashboard() {
+    try {
+      const data = await getDashboardData();
+
+      setKpis(data.kpis);
+    } catch (error) {
+      console.error("Erro ao carregar KPIs do dashboard:", error);
+    }
+  }
+
+  
+  carregarDashboard();
+  }, []);
+
+  const stats: StatCardProps[] = [
   {
     label: "Produtividade Média",
-    value: "142.4",
+    value: kpis.produtividade_media.toFixed(1),
     unit: "sc/ha",
     note: "12.4% vs ciclo anterior",
     noteIcon: TrendingUp,
@@ -28,7 +52,7 @@ const stats: StatCardProps[] = [
   },
   {
     label: "Variação da Produção",
-    value: "+8.2",
+    value: `${kpis.variacao_producao > 0 ? "+" : ""}${kpis.variacao_producao.toFixed(1)}`,
     unit: "%",
     note: "Tendência de crescimento ideal",
     noteIcon: CircleCheck,
@@ -37,16 +61,15 @@ const stats: StatCardProps[] = [
   },
   {
     label: "Chuva Acumulada",
-    value: "648",
+    value: kpis.chuva_acumulada.toFixed(0),
     unit: "mm",
     note: "15% abaixo da média histórica",
     noteIcon: TriangleAlert,
     icon: Droplets,
     tone: "warning",
   },
-];
+  ];
 
-export default function ProdutorDashboard() {
   return (
     <div className="theme-dashboard flex min-h-screen bg-background font-sans text-foreground">
       <Sidebar />
