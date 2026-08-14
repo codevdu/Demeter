@@ -11,7 +11,6 @@ import {
   Settings,
   CircleHelp,
   Radio,
-  ArrowRight,
   Menu,
   Map,
   type LucideIcon,
@@ -127,30 +126,6 @@ export function Sidebar() {
                 <span className={cn("size-1.5 shrink-0 rounded-full", color)} aria-hidden />
               </div>
             ))}
-          </div>
-        )}
-
-        {isOpen && (
-          <div className="rounded-lg border border-primary/20 bg-primary/6 p-3">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">
-              Novo
-            </span>
-
-            <h3 className="mt-1.5 text-sm font-semibold text-foreground">
-              Mapas de Saturação do Solo
-            </h3>
-
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Monitoramento de umidade de alta precisão para o seu setor norte.
-            </p>
-
-            <Link
-              href="/produtor/mapas"
-              className="mt-2.5 inline-flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:text-foreground"
-            >
-              Ver dados
-              <ArrowRight className="size-3" />
-            </Link>
           </div>
         )}
       </div>
