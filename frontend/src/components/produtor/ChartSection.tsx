@@ -6,63 +6,114 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-/* Produtividade mensal em sc/ha, plotada num viewBox de 800x320 */
+import { useMemo, useState } from "react";
+import Productivity from "../productivity-rain";
 
 const series = [
-  { month: "Nov", productivity: 125 },
-  { month: "Dez", productivity: 135 },
-  { month: "Jan", productivity: 155 },
-  { month: "Fev", productivity: 118 },
-  { month: "Mar", productivity: 162 },
-  { month: "Abr", productivity: 134 },
-  { month: "Mai", productivity: 160 },
+  { date: "2023-11-01", produtividade: 125, chuva: 98 },
+  { date: "2023-11-05", produtividade: 125, chuva: 98 },
+  { date: "2023-11-10", produtividade: 200, chuva: 120 },
+  { date: "2023-11-20", produtividade: 126, chuva: 130 },
+  { date: "2023-11-30", produtividade: 190, chuva: 130 },
+  { date: "2023-12-01", produtividade: 135, chuva: 112 },
+  { date: "2024-01-01", produtividade: 155, chuva: 140 },
+  { date: "2024-02-01", produtividade: 118, chuva: 85 },
+  { date: "2024-03-01", produtividade: 162, chuva: 168 },
+  { date: "2024-04-01", produtividade: 134, chuva: 120 },
+  { date: "2024-06-01", produtividade: 160, chuva: 87 },
+  { date: "2024-07-01", produtividade: 189, chuva: 55 },
+  { date: "2024-08-01", produtividade: 140, chuva: 85 },
+  { date: "2024-09-01", produtividade: 170, chuva: 155 },
+  { date: "2024-10-01", produtividade: 120, chuva: 95 },
+  { date: "2024-11-01", produtividade: 110, chuva: 125 },
+  { date: "2024-12-01", produtividade: 260, chuva: 155 },
+  { date: "2025-01-15", produtividade: 142, chuva: 135 },
+  { date: "2025-01-28", produtividade: 180, chuva: 150 },
+  { date: "2025-02-10", produtividade: 128, chuva: 90 },
+  { date: "2025-02-22", produtividade: 165, chuva: 110 },
+  { date: "2025-03-05", produtividade: 175, chuva: 172 },
+  { date: "2025-03-18", produtividade: 210, chuva: 160 },
+  { date: "2025-04-12", produtividade: 130, chuva: 115 },
+  { date: "2025-05-01", produtividade: 148, chuva: 80 },
+  { date: "2025-05-20", produtividade: 195, chuva: 65 },
+  { date: "2025-06-14", produtividade: 152, chuva: 45 },
+  { date: "2025-07-08", produtividade: 178, chuva: 30 },
+  { date: "2025-07-25", produtividade: 160, chuva: 50 },
+  { date: "2025-08-11", produtividade: 135, chuva: 70 },
+  { date: "2025-09-03", produtividade: 182, chuva: 140 },
+  { date: "2025-09-21", produtividade: 205, chuva: 160 },
+  { date: "2025-10-10", produtividade: 115, chuva: 105 },
+  { date: "2025-11-05", produtividade: 150, chuva: 130 },
+  { date: "2025-11-25", produtividade: 220, chuva: 145 },
+  { date: "2025-12-12", produtividade: 245, chuva: 165 },
 ];
 
-const ranges = ["30D", "6M", "1A"];
+const CULTURAS = ["Milho", "Feijão", "Soja", "Algodão"] as const;
+type Cultura = (typeof CULTURAS)[number];
 
-const VIEW_HEIGHT = 320;
-const BASELINE = 290;
-const PLOT_HEIGHT = 260;
-const MAX_VALUE = 200;
-const BAR_WIDTH = 26;
-const COLUMN_WIDTH = 800 / series.length;
+type Range = "30D" | "6M" | "1A";
 
-const yTicks = [0, 50, 100, 150, 200];
+const ranges: Range[] = ["30D", "6M", "1A"];
 
-/* Converte um valor do eixo Y em coordenada do viewBox */
-function toY(value: number) {
-  return BASELINE - (value / MAX_VALUE) * PLOT_HEIGHT;
-}
+const RANGE_TO_DAYS: Record<Range, number> = {
+  "30D": 30,
+  "6M": 182,
+  "1A": 365,
+};
 
-/* Centro horizontal da coluna de cada mês */
-function toX(index: number) {
-  return COLUMN_WIDTH * (index + 0.5);
+function filterByRange(data: typeof series, range: Range) {
+  const referenceDate = data.reduce((latest, item) => {
+    const current = new Date(item.date);
+    return current > latest ? current : latest;
+  }, new Date(0));
+
+  const days = RANGE_TO_DAYS[range];
+  const cutoff = new Date(referenceDate);
+  cutoff.setDate(cutoff.getDate() - days);
+
+  return data.filter((item) => new Date(item.date) >= cutoff);
 }
 
 export function ChartSection() {
+  const [isLoading] = useState(false);
+  const [selectedRange, setSelectedRange] = useState<Range>("1A");
+  const [selectedCultura, setSelectedCultura] = useState<Cultura>(CULTURAS[0]);
+
+  const filteredData = useMemo(
+    () => filterByRange(series, selectedRange),
+    [selectedRange]
+  );
+
   return (
     <Card data-slot="chart-section" className="xl:col-span-2">
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <CardTitle>Produtividade x Chuva</CardTitle>
-
           <CardDescription>
-            Indicadores de performance ao longo da safra 2023/24
+            Indicadores de performance ao longo da safra
           </CardDescription>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select className="rounded-lg border border-border bg-surface-raised px-3 py-1.5 text-xs font-medium text-foreground-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <option>Milho</option>
+          <select
+            value={selectedCultura}
+            onChange={(e) => setSelectedCultura(e.target.value as Cultura)}
+            className="rounded-lg border border-border bg-surface-raised px-3 py-1.5 text-xs font-medium text-foreground-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {CULTURAS.map((cultura) => (
+              <option key={cultura} value={cultura}>
+                {cultura}
+              </option>
+            ))}
           </select>
 
           <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-raised p-1">
-            {ranges.map((range, index) => (
+            {ranges.map((range) => (
               <button
                 key={range}
                 type="button"
-                data-active={index === 0 ? "" : undefined}
+                data-active={range === selectedRange ? "" : undefined}
+                onClick={() => setSelectedRange(range)}
                 className={cn(
                   "rounded-md px-2.5 py-1 text-xs font-medium text-foreground-subtle transition-colors",
                   "hover:text-foreground",
@@ -77,143 +128,16 @@ export function ChartSection() {
       </CardHeader>
 
       <CardContent>
-        <div className="flex gap-2">
-          {/* Rótulo do eixo Y */}
-
-          <span className="rotate-180 self-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
-            Produtividade (sc/ha)
-          </span>
-
-          {/* Marcações do eixo Y */}
-
-          <div className="relative h-64 w-7">
-            {yTicks.map((tick) => (
-              <span
-                key={tick}
-                className="absolute right-0 -translate-y-1/2 text-[10px] text-muted-foreground"
-                style={{ top: `${(toY(tick) / VIEW_HEIGHT) * 100}%` }}
-              >
-                {tick}
-              </span>
-            ))}
-          </div>
-
-          {/* Área de plotagem */}
-
-          <div className="relative h-64 flex-1 overflow-hidden rounded-lg border border-border bg-background">
-            <svg
-              className="absolute inset-0 h-full w-full"
-              viewBox={`0 0 800 ${VIEW_HEIGHT}`}
-              preserveAspectRatio="none"
-            >
-              {/* Grade */}
-
-              <g
-                className="stroke-border"
-                strokeDasharray="3 3"
-                vectorEffect="non-scaling-stroke"
-              >
-                {yTicks.map((tick) => (
-                  <line
-                    key={tick}
-                    x1={0}
-                    x2={800}
-                    y1={toY(tick)}
-                    y2={toY(tick)}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-
-                {series.map((item, index) => (
-                  <line
-                    key={item.month}
-                    x1={toX(index)}
-                    x2={toX(index)}
-                    y1={toY(MAX_VALUE)}
-                    y2={BASELINE}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-              </g>
-
-              {/* Barras de produtividade */}
-
-              {series.map((item, index) => {
-                const y = toY(item.productivity);
-
-                return (
-                  <g key={item.month}>
-                    <rect
-                      x={toX(index) - BAR_WIDTH / 2}
-                      y={y}
-                      width={BAR_WIDTH}
-                      height={BASELINE - y}
-                      className="fill-primary"
-                      fillOpacity={0.25}
-                    />
-
-                    <rect
-                      x={toX(index) - BAR_WIDTH / 2}
-                      y={y}
-                      width={BAR_WIDTH}
-                      height={5}
-                      className="fill-primary"
-                    />
-                  </g>
-                );
-              })}
-
-              {/* Curva de chuva */}
-
-              <path
-                d="
-                  M 20 255
-                  C 90 250, 130 216, 180 212
-                  C 230 209, 250 222, 290 220
-                  C 330 218, 360 212, 400 205
-                  C 450 196, 470 150, 510 140
-                  C 555 129, 580 85, 620 78
-                  C 660 71, 690 88, 730 108
-                  C 755 121, 775 146, 795 170
-                "
-                fill="none"
-                className="stroke-status-blue"
-                strokeWidth="3"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-
-            {/* Meses do eixo X */}
-
-            <div className="absolute inset-x-0 bottom-1 flex text-[10px] text-muted-foreground">
-              {series.map((item) => (
-                <span key={item.month} className="flex-1 text-center">
-                  {item.month}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Rótulo do eixo X */}
-
-        <p className="mt-1 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Safra 2023/24
-        </p>
-
-        {/* Legenda */}
+        <Productivity data={filteredData} isLoading={isLoading} />
 
         <dl className="mt-4 flex flex-wrap gap-6 text-sm">
           <div className="flex items-center gap-2">
             <span className="size-2 shrink-0 rounded-full bg-primary" />
-
             <dt className="text-foreground-subtle">Produtividade (sc/ha)</dt>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="size-2 shrink-0 rounded-full bg-status-blue" />
-
             <dt className="text-foreground-subtle">Chuva (mm)</dt>
           </div>
         </dl>

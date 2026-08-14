@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { Sidebar } from "@/components/produtor/Sidebar";
-import { Topbar } from "@/components/produtor/Topbar";
 import { StatsGrid, type StatCardProps } from "@/components/produtor/StatCard";
 import { ChartSection } from "@/components/produtor/ChartSection";
 import { TimelineSection } from "@/components/produtor/TimelineSection";
@@ -53,10 +52,8 @@ export default function ProdutorDashboard() {
       <div className="theme-dashboard flex min-h-screen bg-background font-sans text-foreground">
         <Sidebar />
 
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="mx-auto flex max-w-6xl flex-col gap-6">
-            <Topbar title=""/>
-
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="mx-auto flex w-full max-w-none flex-col gap-6 2xl:max-w-[1600px]">
             <StatsGrid stats={stats} />
 
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
