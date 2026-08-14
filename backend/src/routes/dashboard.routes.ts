@@ -5,7 +5,7 @@ import { authMiddleware } from '../middlewares/auth.middleware.js';
 const dashboardRoutes = Router();
 const dashboardController = new DashboardController();
 
-dashboardRoutes.get('/dashboard', authMiddleware, (req, res) =>
+dashboardRoutes.get('/dashboard/:tipo', authMiddleware, (req, res) =>
   dashboardController.getDashboardData(req, res)
 );
 
