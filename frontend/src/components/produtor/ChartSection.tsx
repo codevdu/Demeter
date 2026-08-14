@@ -11,6 +11,7 @@ import Productivity from "../productivity-rain";
 
 const series = [
   { date: "2023-11-01", produtividade: 125, chuva: 98 },
+  { date: "2023-11-05", produtividade: 125, chuva: 98 },
   { date: "2023-11-10", produtividade: 200, chuva: 120 },
   { date: "2023-11-20", produtividade: 126, chuva: 130 },
   { date: "2023-11-30", produtividade: 190, chuva: 130 },
