@@ -25,6 +25,10 @@ export default function ProdutorDashboard() {
   chuva_acumulada: 0,
   });
 
+  const [loading, setLoading] = React.useState(true);
+
+  const [error, setError] = React.useState<string | null>(null);
+
   React.useEffect(() => {
   async function carregarDashboard() {
     try {
@@ -33,17 +37,20 @@ export default function ProdutorDashboard() {
       setKpis(data.kpis);
     } catch (error) {
       console.error("Erro ao carregar KPIs do dashboard:", error);
+      setError("Não foi possível carregar os indicadores.");
+    } finally {
+      setLoading(false);
     }
   }
 
-  
   carregarDashboard();
-  }, []);
+}, []);
+
 
   const stats: StatCardProps[] = [
   {
     label: "Produtividade Média",
-    value: kpis.produtividade_media.toFixed(1),
+    value: loading ? "..." : kpis.produtividade_media.toFixed(1),
     unit: "sc/ha",
     note: "12.4% vs ciclo anterior",
     noteIcon: TrendingUp,
@@ -52,7 +59,9 @@ export default function ProdutorDashboard() {
   },
   {
     label: "Variação da Produção",
-    value: `${kpis.variacao_producao > 0 ? "+" : ""}${kpis.variacao_producao.toFixed(1)}`,
+    value: loading
+    ? "..."
+    : `${kpis.variacao_producao > 0 ? "+" : ""}${kpis.variacao_producao.toFixed(1)}`,
     unit: "%",
     note: "Tendência de crescimento ideal",
     noteIcon: CircleCheck,
@@ -61,7 +70,7 @@ export default function ProdutorDashboard() {
   },
   {
     label: "Chuva Acumulada",
-    value: kpis.chuva_acumulada.toFixed(0),
+    value: loading ? "..." : kpis.chuva_acumulada.toFixed(0),
     unit: "mm",
     note: "15% abaixo da média histórica",
     noteIcon: TriangleAlert,
@@ -77,6 +86,12 @@ export default function ProdutorDashboard() {
       <main className="flex-1 overflow-y-auto p-6">
         <div className="mx-auto flex max-w-6xl flex-col gap-6">
           <Topbar title="Quixadá – Safra 2023/24" />
+
+          {error && (
+            <p className="text-sm text-red-400">
+              {error}
+            </p>
+          )}
 
           <StatsGrid stats={stats} />
 
