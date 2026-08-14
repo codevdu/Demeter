@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -17,7 +16,6 @@ export function SoilSection() {
     <Card data-slot="soil-section">
       <CardHeader>
         <CardTitle>Distribuição de Cultivo</CardTitle>
-        <CardDescription>Setor A-24</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col items-center gap-4">

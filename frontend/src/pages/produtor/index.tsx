@@ -10,6 +10,8 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { ProdutorRestriction } from "@/components/auth/role.guard";
+import { Topbar } from "@/components/produtor/Topbar";
+import { useState } from "react";
 
 const stats: StatCardProps[] = [
   {
@@ -42,12 +44,21 @@ const stats: StatCardProps[] = [
 ];
 
 export default function ProdutorDashboard() {
+  const [municipality, setMunicipality] = useState<string | null>(null);
+
   return (
     <ProdutorRestriction>
       <div className="theme-dashboard flex min-h-screen bg-background font-sans text-foreground">
         <Sidebar />
 
         <main className="flex-1 overflow-y-auto p-8">
+          <div className="pb-8">
+            <Topbar
+              title="Visão Geral"
+              onMunicipalityChange={setMunicipality}
+              selectedMunicipality={municipality}
+            />
+          </div>
           <div className="mx-auto flex w-full max-w-none flex-col gap-6 2xl:max-w-[1600px]">
             <StatsGrid stats={stats} />
 
