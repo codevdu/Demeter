@@ -2,7 +2,9 @@ import axios from 'axios';
 import { Profile } from '@prisma/client';
 import { UserRepository } from '../repositories/user.repository.js';
 
+export type DashboardType = 'mapas' | 'dados';
 export interface DashboardQueryParams {
+  tipo: DashboardType;
   cultura?: string;
   de?: string;
   ate?: string;
@@ -27,12 +29,19 @@ export class DashboardService {
     query: DashboardQueryParams,
   ) {
     const {
+      tipo,
       cultura = 'milho',
       de = '2015',
       ate = '2022',
       municipiosRequested,
       requestedProfile,
     } = query;
+
+    const validTypes: DashboardType[] = ['mapas', 'dados'];
+    
+    if (!validTypes.includes(tipo)) {
+      throw new Error(`Tipo de consulta inválido: "${tipo}". Tipos permitidos: ${validTypes.join(', ')}`);
+    }
 
     const dbUser = await this.userRepository.findById(userId);
 
@@ -58,7 +67,7 @@ export class DashboardService {
     }
 
     try {
-      const { data } = await axios.get(`${this.dataServiceUrl}/grafico`, {
+      const { data } = await axios.get(`${this.dataServiceUrl}/${tipo}`, {
         params,
       });
 

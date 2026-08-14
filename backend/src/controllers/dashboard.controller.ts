@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { DashboardService } from '../services/dashboard.service.js';
-import { prisma } from '../prisma/index.js'
+import { DashboardService, DashboardType } from '../services/dashboard.service.js';
 import { UserRepository } from '../repositories/user.repository.js';
 
 export class DashboardController {
@@ -18,10 +17,12 @@ export class DashboardController {
       if (!user) {
         return res.status(401).json({ error: 'Usuário não autenticado' });
       }
-
+      const { tipo } = req.params;
+      
       const { cultura, de, ate, municipios, perfil } = req.query;
 
       const result = await this.dashboardService.getDashboardData(user.id, {
+        tipo: tipo as DashboardType,
         cultura: cultura ? String(cultura) : undefined,
         de: de ? String(de) : undefined,
         ate: ate ? String(ate) : undefined,
