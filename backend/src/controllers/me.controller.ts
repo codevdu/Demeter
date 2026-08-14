@@ -10,20 +10,21 @@ export class MeController {
 
   async me(req: Request, res: Response) {
     const usuario = await this.userRepository.findById(req.user!.id);
+    const car = await this.userRepository.findById(req.user!.id)
 
     if (!usuario) {
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
     const userData = usuario as any;
+    const userCar = car?.carProperties as any;
 
     return res.status(200).json({
       id: userData.id,
       name: userData.name,
       email: userData.email,
       profile: userData.profile,
-      municipalityId: userData.municipalityId,
-      municipality: userData.municipality,
+      carProperties: userCar
     });
   }
 }
