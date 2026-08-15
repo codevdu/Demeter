@@ -26,7 +26,7 @@ export function RoleGuard({ allowedProfiles, children }: RoleGuardProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex theme-dashboard min-h-screen items-center justify-center bg-background">
         <ClassicLoader/>
       </div>
     );

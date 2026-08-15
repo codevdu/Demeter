@@ -6,9 +6,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  CloudRain,
-  Tractor,
-  Settings,
   CircleHelp,
   Radio,
   Menu,
@@ -30,9 +27,6 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: "/produtor", label: "Visão Geral", icon: LayoutDashboard },
   { href: "/produtor/mapas", label: "Mapas", icon: Map },
-  { href: "/produtor/previsao", label: "Previsão", icon: CloudRain },
-  { href: "/produtor/manejo-safra", label: "Manejo de Safra", icon: Tractor },
-  { href: "/produtor/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 const MUNICIPIO_COLORS = [
@@ -47,24 +41,44 @@ const supportItems = [
   { label: "Status do Sistema", icon: Radio },
 ] as const;
 
+function MunicipioSkeleton() {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <p className="px-2.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        Municípios
+      </p>
+
+      {Array.from({ length: 2 }).map((_, index) => (
+        <div
+          key={index}
+          className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5"
+        >
+          <div className="size-3.5 shrink-0 animate-pulse rounded-full bg-muted" />
+          <div className="h-3.5 w-24 animate-pulse rounded bg-muted" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function Sidebar() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [isOpen, setIsOpen] = React.useState(true);
 
   // Municípios únicos a partir das propriedades (CAR) do usuário
-const municipios = React.useMemo(() => {
-  if (!user?.carProperties) return [];
+  const municipios = React.useMemo(() => {
+    if (!user?.carProperties) return [];
 
-  const nomes = new Set<string>(
-    user.carProperties.map((cp: IcarResponse) => cp.municipality as string)
-  );
+    const nomes = new Set<string>(
+      user.carProperties.map((cp: IcarResponse) => cp.municipality as string)
+    );
 
-  return Array.from(nomes).map((nome: string, index) => ({
-    label: nome,
-    color: MUNICIPIO_COLORS[index % MUNICIPIO_COLORS.length],
-  }));
-}, [user]);
+    return Array.from(nomes).map((nome: string, index) => ({
+      label: nome,
+      color: MUNICIPIO_COLORS[index % MUNICIPIO_COLORS.length],
+    }));
+  }, [user]);
 
   return (
     <aside
@@ -129,7 +143,9 @@ const municipios = React.useMemo(() => {
           })}
         </nav>
 
-        {isOpen && municipios.length > 0 && (
+        {isOpen && loading && <MunicipioSkeleton />}
+
+        {isOpen && !loading && municipios.length > 0 && (
           <div className="flex flex-col gap-0.5">
             <p className="px-2.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Municípios
