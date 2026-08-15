@@ -1,3 +1,6 @@
+import * as React from "react";
+
+import { getDashboardData } from "@/services/dashboard-service";
 import { Sidebar } from "@/components/produtor/Sidebar";
 import { StatsGrid, type StatCardProps } from "@/components/produtor/StatCard";
 import { ChartSection } from "@/components/produtor/ChartSection";
@@ -13,10 +16,40 @@ import { ProdutorRestriction } from "@/components/auth/role.guard";
 import { Topbar } from "@/components/produtor/Topbar";
 import { useState } from "react";
 
-const stats: StatCardProps[] = [
+export default function ProdutorDashboard() {
+
+  const [kpis, setKpis] = React.useState({
+  produtividade_media: 0,
+  variacao_producao: 0,
+  chuva_acumulada: 0,
+  });
+
+  const [loading, setLoading] = React.useState(true);
+
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+  async function carregarDashboard() {
+    try {
+      const data = await getDashboardData();
+
+      setKpis(data.kpis);
+    } catch (error) {
+      console.error("Erro ao carregar KPIs do dashboard:", error);
+      setError("Não foi possível carregar os indicadores.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  carregarDashboard();
+}, []);
+
+
+  const stats: StatCardProps[] = [
   {
     label: "Produtividade Média",
-    value: "142.4",
+    value: loading ? "..." : kpis.produtividade_media.toFixed(1),
     unit: "sc/ha",
     note: "12.4% vs ciclo anterior",
     noteIcon: TrendingUp,
@@ -25,7 +58,9 @@ const stats: StatCardProps[] = [
   },
   {
     label: "Variação da Produção",
-    value: "+8.2",
+    value: loading
+    ? "..."
+    : `${kpis.variacao_producao > 0 ? "+" : ""}${kpis.variacao_producao.toFixed(1)}`,
     unit: "%",
     note: "Tendência de crescimento ideal",
     noteIcon: CircleCheck,
@@ -34,14 +69,14 @@ const stats: StatCardProps[] = [
   },
   {
     label: "Chuva Acumulada",
-    value: "648",
+    value: loading ? "..." : kpis.chuva_acumulada.toFixed(0),
     unit: "mm",
     note: "15% abaixo da média histórica",
     noteIcon: TriangleAlert,
     icon: Droplets,
     tone: "warning",
   },
-];
+  ];
 
 export default function ProdutorDashboard() {
   const [municipality, setMunicipality] = useState<string | null>(null);
