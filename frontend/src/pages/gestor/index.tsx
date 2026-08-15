@@ -21,7 +21,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { GestorRestriction } from "@/components/auth/role.guard";
 import { ErrorFallback } from "@/components/ui/error-fallback";
-import { mockGestorData } from "./gestor-mock";
+import { mockGestorData } from "../../lib/gestor-mock";
 
 export default function GestorDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
