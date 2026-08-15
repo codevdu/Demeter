@@ -26,7 +26,7 @@ export default function ProdutorDashboard() {
 
   const [loading, setLoading] = React.useState(true);
 
-  const [error, setError] = React.useState<string | null>(null);
+  const [, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
   async function carregarDashboard() {
@@ -78,7 +78,6 @@ export default function ProdutorDashboard() {
   },
   ];
 
-export default function ProdutorDashboard() {
   const [municipality, setMunicipality] = useState<string | null>(null);
 
   return (
