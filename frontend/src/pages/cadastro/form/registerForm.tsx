@@ -146,8 +146,7 @@ export default function RegisterForm() {
         password,
       });
 
-      // nada de localStorage — o cookie httpOnly já foi setado pelo back
-      router.push("/dashboard");
+      router.push("/produtor");
     } catch (err) {
       setSubmitError(
         err instanceof Error
@@ -383,11 +382,11 @@ export default function RegisterForm() {
             </p>
           </form>
 
-          <div className="mt-1 flex justify-center text-center text-[11px] text-zinc-500 lg:mt-14 lg:justify-start">
+          {/* <div className="mt-1 flex justify-center text-center text-[11px] text-zinc-500 lg:mt-14 lg:justify-start">
             <span>
               © 2026 Deméter Chuva & Safra
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

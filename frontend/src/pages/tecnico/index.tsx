@@ -5,6 +5,7 @@ import { RainfallProductivityChart } from '@/components/dashboard/rainfall-produ
 import { TrafficByRegion } from '@/components/dashboard/traffic-by-region'
 import { MunicipalityTable } from '@/components/dashboard/municipality-table'
 import { Footer } from '@/components/dashboard/footer'
+import { TecnicoRestriction } from '@/components/auth/role.guard'
 
 const stats = [
 	{ label: 'Avg Rain (mm)', value: '124.5', change: 12 },
@@ -15,27 +16,29 @@ const stats = [
 
 export default function DashboardOverview() {
 	return (
-		<div className="flex min-h-screen bg-background">
-			<Sidebar />
+		<TecnicoRestriction>
+			<div className="flex min-h-screen bg-background">
+				<Sidebar />
 
-			<main className="flex-1 overflow-y-auto p-6">
-				<div className="mx-auto flex max-w-6xl flex-col gap-6">
-					<Topbar title="Overview" />
+				<main className="flex-1 overflow-y-auto p-6">
+					<div className="mx-auto flex max-w-6xl flex-col gap-6">
+						<Topbar title="Overview" />
 
-					<StatsGrid stats={stats} />
+						<StatsGrid stats={stats} />
 
-					<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-						<div className="lg:col-span-2">
-							<RainfallProductivityChart />
+						<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+							<div className="lg:col-span-2">
+								<RainfallProductivityChart />
+							</div>
+							<TrafficByRegion />
 						</div>
-						<TrafficByRegion />
+
+						<MunicipalityTable />
+
+						<Footer />
 					</div>
-
-					<MunicipalityTable />
-
-					<Footer />
-				</div>
-			</main>
-		</div>
+				</main>
+			</div>
+		</TecnicoRestriction>
 	)
 }

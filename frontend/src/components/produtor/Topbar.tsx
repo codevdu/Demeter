@@ -1,11 +1,64 @@
+// components/produtor/topbar.tsx
+"use client";
+
 import * as React from "react";
-import { Search, Bell, Sprout } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface TopbarProps {
   title: string;
+  selectedMunicipality?: string | null;
+  onMunicipalityChange?: (municipality: string) => void;
 }
 
-export function Topbar({ title }: TopbarProps) {
+const MUNICIPIO_COLORS = [
+  "bg-primary",
+  "bg-status-blue",
+  "bg-status-orange",
+  "bg-status-purple",
+];
+
+export function Topbar({
+  title,
+  selectedMunicipality,
+  onMunicipalityChange,
+}: TopbarProps) {
+  const { user } = useAuth();
+  const [internalSelected, setInternalSelected] = React.useState<string | null>(
+    null
+  );
+
+  const isControlled = selectedMunicipality !== undefined;
+  const municipios = React.useMemo(() => {
+    if (!user?.carProperties) return [];
+
+    const nomes = new Set(user.carProperties.map((cp) => cp.municipality));
+    return Array.from(nomes).map((nome, index) => ({
+      label: nome,
+      color: MUNICIPIO_COLORS[index % MUNICIPIO_COLORS.length],
+    }));
+  }, [user]);
+
+  const selected = isControlled
+    ? selectedMunicipality
+    : internalSelected ?? municipios[0]?.label ?? null;
+
+  function handleSelect(label: string) {
+    if (isControlled) {
+      onMunicipalityChange?.(label);
+    } else {
+      setInternalSelected(label);
+    }
+  }
+
   return (
     <header
       data-slot="topbar"
@@ -13,36 +66,51 @@ export function Topbar({ title }: TopbarProps) {
     >
       <h1 className="text-lg font-semibold text-primary">{title}</h1>
 
-      <div className="flex items-center gap-3">
-        <label className="relative hidden md:block">
-          <span className="sr-only">Buscar dados</span>
+      {municipios.length > 0 && (
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-foreground-subtle">
+            Visualizando{" "}
+            <span className="font-medium text-foreground">
+              {selected ?? "—"}
+            </span>
+          </p>
 
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-lg border border-border bg-sidebar px-3 py-1.5 text-sm font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <MapPin className="size-3.5 shrink-0" />
+                {selected ?? "Selecionar município"}
+                <ChevronDown className="size-3.5 shrink-0" />
+              </button>
+            </DropdownMenuTrigger>
 
-          <input
-            type="search"
-            placeholder="Buscar dados..."
-            className="h-9 w-64 rounded-lg border border-border bg-surface pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
-        </label>
-
-        <button
-          type="button"
-          aria-label="Notificações"
-          className="relative flex size-9 items-center justify-center rounded-lg border border-border bg-surface text-foreground-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Bell className="size-4" />
-
-          <span className="absolute right-2 top-2 size-1.5 rounded-full bg-status-orange" />
-        </button>
-
-        <div
-          className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground"
-          aria-hidden
-        >
-          <Sprout className="size-4" />
+            <DropdownMenuContent align="end" className="w-48">
+              {municipios.map(({ label, color }) => (
+                <DropdownMenuItem
+                  key={label}
+                  onSelect={() => handleSelect(label)}
+                  className={cn(
+                    "flex items-center justify-between gap-2.5",
+                    label === selected && "bg-muted text-foreground"
+                  )}
+                >
+                  <span className="flex items-center gap-2 truncate">
+                    <MapPin className="size-3.5 shrink-0" />
+                    {label}
+                  </span>
+                  <span
+                    className={cn("size-1.5 shrink-0 rounded-full", color)}
+                    aria-hidden
+                  />
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </div>
+      )}
     </header>
   );
 }

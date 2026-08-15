@@ -6,63 +6,155 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useMemo, useState } from "react";
+import Productivity from "../productivity-rain";
 
-/* Produtividade mensal em sc/ha, plotada num viewBox de 800x320 */
+function gerarSerieDiaria(inicio: string, fim: string) {
+  const start = new Date(inicio);
+  const end = new Date(fim);
+  const dias: { date: string; produtividade: number; chuva: number }[] = [];
 
-const series = [
-  { month: "Nov", productivity: 125 },
-  { month: "Dez", productivity: 135 },
-  { month: "Jan", productivity: 155 },
-  { month: "Fev", productivity: 118 },
-  { month: "Mar", productivity: 162 },
-  { month: "Abr", productivity: 134 },
-  { month: "Mai", productivity: 160 },
-];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    dias.push({
+      date: d.toISOString().split("T")[0],
+      produtividade: 100 + Math.round(Math.random() * 120),
+      chuva: Math.round(Math.random() * 180),
+    });
+  }
 
-const ranges = ["30D", "6M", "1A"];
-
-const VIEW_HEIGHT = 320;
-const BASELINE = 290;
-const PLOT_HEIGHT = 260;
-const MAX_VALUE = 200;
-const BAR_WIDTH = 26;
-const COLUMN_WIDTH = 800 / series.length;
-
-const yTicks = [0, 50, 100, 150, 200];
-
-/* Converte um valor do eixo Y em coordenada do viewBox */
-function toY(value: number) {
-  return BASELINE - (value / MAX_VALUE) * PLOT_HEIGHT;
+  return dias;
 }
 
-/* Centro horizontal da coluna de cada mês */
-function toX(index: number) {
-  return COLUMN_WIDTH * (index + 0.5);
+const series = gerarSerieDiaria("2022-01-01", "2024-12-31");
+
+type Range = "7D" | "1M" | "3M" | "custom";
+
+const ranges: Exclude<Range, "custom">[] = ["7D", "1M", "3M"];
+
+const RANGE_TO_DAYS: Record<Exclude<Range, "custom">, number> = {
+  "7D": 7,
+  "1M": 30,
+  "3M": 91,
+};
+
+const MAX_CUSTOM_MONTHS = 3;
+
+const MONTH_LABELS = [
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+  "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+];
+
+interface CustomRange {
+  startYear: number;
+  startMonth: number;
+  endYear: number;
+  endMonth: number;
+}
+
+function filterByFixedRange(data: typeof series, range: Exclude<Range, "custom">) {
+  const referenceDate = data.reduce((latest, item) => {
+    const current = new Date(item.date);
+    return current > latest ? current : latest;
+  }, new Date(0));
+
+  const days = RANGE_TO_DAYS[range];
+  const cutoff = new Date(referenceDate);
+  cutoff.setDate(cutoff.getDate() - days);
+
+  return data.filter((item) => new Date(item.date) >= cutoff);
+}
+
+function filterByCustomRange(data: typeof series, custom: CustomRange) {
+  const start = new Date(custom.startYear, custom.startMonth, 1);
+  const end = new Date(custom.endYear, custom.endMonth + 1, 0, 23, 59, 59);
+
+  return data.filter((item) => {
+    const d = new Date(item.date);
+    return d >= start && d <= end;
+  });
+}
+
+function monthsBetween(custom: CustomRange) {
+  return (
+    (custom.endYear - custom.startYear) * 12 +
+    (custom.endMonth - custom.startMonth)
+  );
+}
+
+function getAvailableYears(data: typeof series) {
+  const years = new Set(data.map((item) => new Date(item.date).getFullYear()));
+  return Array.from(years).sort((a, b) => a - b);
 }
 
 export function ChartSection() {
+  const [isLoading] = useState(false);
+  const [selectedRange, setSelectedRange] = useState<Range>("1M");
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
+  const [customError, setCustomError] = useState<string | null>(null);
+
+  const availableYears = useMemo(() => getAvailableYears(series), []);
+
+  const [draft, setDraft] = useState<CustomRange>(() => {
+    const lastYear = availableYears[availableYears.length - 1] ?? new Date().getFullYear();
+    return { startYear: lastYear, startMonth: 0, endYear: lastYear, endMonth: 2 };
+  });
+
+  const [appliedCustom, setAppliedCustom] = useState<CustomRange | null>(null);
+
+  const filteredData = useMemo(() => {
+    if (selectedRange === "custom" && appliedCustom) {
+      return filterByCustomRange(series, appliedCustom);
+    }
+    if (selectedRange !== "custom") {
+      return filterByFixedRange(series, selectedRange);
+    }
+    return [];
+  }, [selectedRange, appliedCustom]);
+
+  function handleApplyCustom() {
+    const diff = monthsBetween(draft);
+
+    if (diff < 0) {
+      setCustomError("A data final não pode vir antes da inicial.");
+      return;
+    }
+
+    if (diff > MAX_CUSTOM_MONTHS - 1) {
+      setCustomError(`O intervalo não pode passar de ${MAX_CUSTOM_MONTHS} meses.`);
+      return;
+    }
+
+    setCustomError(null);
+    setAppliedCustom(draft);
+    setSelectedRange("custom");
+    setShowCustomPicker(false);
+  }
+
+  const customLabel = appliedCustom
+    ? `${MONTH_LABELS[appliedCustom.startMonth]}/${appliedCustom.startYear} – ${MONTH_LABELS[appliedCustom.endMonth]}/${appliedCustom.endYear}`
+    : "Personalizado";
+
   return (
     <Card data-slot="chart-section" className="xl:col-span-2">
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <CardTitle>Produtividade x Chuva</CardTitle>
-
           <CardDescription>
-            Indicadores de performance ao longo da safra 2023/24
+            Indicadores de performance ao longo da safra
           </CardDescription>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <select className="rounded-lg border border-border bg-surface-raised px-3 py-1.5 text-xs font-medium text-foreground-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <option>Milho</option>
-          </select>
-
+        <div className="relative flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-raised p-1">
-            {ranges.map((range, index) => (
+            {ranges.map((range) => (
               <button
                 key={range}
                 type="button"
-                data-active={index === 0 ? "" : undefined}
+                data-active={selectedRange === range ? "" : undefined}
+                onClick={() => {
+                  setSelectedRange(range);
+                  setShowCustomPicker(false);
+                }}
                 className={cn(
                   "rounded-md px-2.5 py-1 text-xs font-medium text-foreground-subtle transition-colors",
                   "hover:text-foreground",
@@ -72,148 +164,139 @@ export function ChartSection() {
                 {range}
               </button>
             ))}
+
+            <button
+              type="button"
+              data-active={selectedRange === "custom" ? "" : undefined}
+              onClick={() => setShowCustomPicker((prev) => !prev)}
+              className={cn(
+                "rounded-md px-2.5 py-1 text-xs font-medium text-foreground-subtle transition-colors",
+                "hover:text-foreground",
+                "data-active:bg-primary data-active:text-primary-foreground",
+              )}
+            >
+              {customLabel}
+            </button>
           </div>
+
+          {showCustomPicker && (
+            <div className="absolute right-0 top-full z-10 mt-2 w-72 rounded-lg border border-border bg-surface p-3 shadow-lg">
+              <p className="mb-2 text-xs font-semibold text-foreground">
+                Escolha um período (máx. {MAX_CUSTOM_MONTHS} meses)
+              </p>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] text-muted-foreground">Mês inicial</label>
+                  <select
+                    value={draft.startMonth}
+                    onChange={(e) =>
+                      setDraft((prev) => ({ ...prev, startMonth: Number(e.target.value) }))
+                    }
+                    className="mt-1 w-full rounded-md border border-border bg-surface-raised px-2 py-1 text-xs"
+                  >
+                    {MONTH_LABELS.map((label, index) => (
+                      <option key={label} value={index}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-muted-foreground">Ano inicial</label>
+                  <select
+                    value={draft.startYear}
+                    onChange={(e) =>
+                      setDraft((prev) => ({ ...prev, startYear: Number(e.target.value) }))
+                    }
+                    className="mt-1 w-full rounded-md border border-border bg-surface-raised px-2 py-1 text-xs"
+                  >
+                    {availableYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-muted-foreground">Mês final</label>
+                  <select
+                    value={draft.endMonth}
+                    onChange={(e) =>
+                      setDraft((prev) => ({ ...prev, endMonth: Number(e.target.value) }))
+                    }
+                    className="mt-1 w-full rounded-md border border-border bg-surface-raised px-2 py-1 text-xs"
+                  >
+                    {MONTH_LABELS.map((label, index) => (
+                      <option key={label} value={index}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-muted-foreground">Ano final</label>
+                  <select
+                    value={draft.endYear}
+                    onChange={(e) =>
+                      setDraft((prev) => ({ ...prev, endYear: Number(e.target.value) }))
+                    }
+                    className="mt-1 w-full rounded-md border border-border bg-surface-raised px-2 py-1 text-xs"
+                  >
+                    {availableYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {customError && (
+                <p className="mt-2 text-xs text-destructive">{customError}</p>
+              )}
+
+              <div className="mt-3 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCustomPicker(false)}
+                  className="rounded-md px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleApplyCustom}
+                  className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Aplicar
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </CardHeader>
 
       <CardContent>
-        <div className="flex gap-2">
-          {/* Rótulo do eixo Y */}
+        <Productivity data={filteredData} isLoading={isLoading} />
 
-          <span className="rotate-180 self-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
-            Produtividade (sc/ha)
-          </span>
-
-          {/* Marcações do eixo Y */}
-
-          <div className="relative h-64 w-7">
-            {yTicks.map((tick) => (
-              <span
-                key={tick}
-                className="absolute right-0 -translate-y-1/2 text-[10px] text-muted-foreground"
-                style={{ top: `${(toY(tick) / VIEW_HEIGHT) * 100}%` }}
-              >
-                {tick}
-              </span>
-            ))}
-          </div>
-
-          {/* Área de plotagem */}
-
-          <div className="relative h-64 flex-1 overflow-hidden rounded-lg border border-border bg-background">
-            <svg
-              className="absolute inset-0 h-full w-full"
-              viewBox={`0 0 800 ${VIEW_HEIGHT}`}
-              preserveAspectRatio="none"
-            >
-              {/* Grade */}
-
-              <g
-                className="stroke-border"
-                strokeDasharray="3 3"
-                vectorEffect="non-scaling-stroke"
-              >
-                {yTicks.map((tick) => (
-                  <line
-                    key={tick}
-                    x1={0}
-                    x2={800}
-                    y1={toY(tick)}
-                    y2={toY(tick)}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-
-                {series.map((item, index) => (
-                  <line
-                    key={item.month}
-                    x1={toX(index)}
-                    x2={toX(index)}
-                    y1={toY(MAX_VALUE)}
-                    y2={BASELINE}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-              </g>
-
-              {/* Barras de produtividade */}
-
-              {series.map((item, index) => {
-                const y = toY(item.productivity);
-
-                return (
-                  <g key={item.month}>
-                    <rect
-                      x={toX(index) - BAR_WIDTH / 2}
-                      y={y}
-                      width={BAR_WIDTH}
-                      height={BASELINE - y}
-                      className="fill-primary"
-                      fillOpacity={0.25}
-                    />
-
-                    <rect
-                      x={toX(index) - BAR_WIDTH / 2}
-                      y={y}
-                      width={BAR_WIDTH}
-                      height={5}
-                      className="fill-primary"
-                    />
-                  </g>
-                );
-              })}
-
-              {/* Curva de chuva */}
-
-              <path
-                d="
-                  M 20 255
-                  C 90 250, 130 216, 180 212
-                  C 230 209, 250 222, 290 220
-                  C 330 218, 360 212, 400 205
-                  C 450 196, 470 150, 510 140
-                  C 555 129, 580 85, 620 78
-                  C 660 71, 690 88, 730 108
-                  C 755 121, 775 146, 795 170
-                "
-                fill="none"
-                className="stroke-status-blue"
-                strokeWidth="3"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-
-            {/* Meses do eixo X */}
-
-            <div className="absolute inset-x-0 bottom-1 flex text-[10px] text-muted-foreground">
-              {series.map((item) => (
-                <span key={item.month} className="flex-1 text-center">
-                  {item.month}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Rótulo do eixo X */}
-
-        <p className="mt-1 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Safra 2023/24
-        </p>
-
-        {/* Legenda */}
+        {selectedRange === "custom" && filteredData.length === 0 && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Nenhum dado encontrado no período selecionado.
+          </p>
+        )}
 
         <dl className="mt-4 flex flex-wrap gap-6 text-sm">
           <div className="flex items-center gap-2">
             <span className="size-2 shrink-0 rounded-full bg-primary" />
-
             <dt className="text-foreground-subtle">Produtividade (sc/ha)</dt>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="size-2 shrink-0 rounded-full bg-status-blue" />
-
             <dt className="text-foreground-subtle">Chuva (mm)</dt>
           </div>
         </dl>

@@ -2,6 +2,7 @@ import { Profile } from '@prisma/client';
 
 export interface TokenPayload {
   id: string;
+  email: string
   profile: Profile;
 }
 

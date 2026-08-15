@@ -1,100 +1,66 @@
+import { useState } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const RADIUS = 70;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-const GAP = 6;
-
-const composition = [
-  { label: "Argila (Argiloso)", value: 45, color: "var(--primary)" },
-  { label: "Silte (Siltoso)", value: 35, color: "var(--status-blue)" },
-  { label: "Areia (Arenoso)", value: 20, color: "var(--status-orange)" },
-];
-
-function sliceLength(value: number) {
-  return (value / 100) * CIRCUMFERENCE;
-}
+import { cn } from "@/lib/utils";
+import ProductivityPie, { pieData } from "../pie-chart";
 
 export function SoilSection() {
-  /* Deslocamento acumulado de cada fatia do anel */
-
-  const slices = composition.map((item, index) => ({
-    ...item,
-    length: sliceLength(item.value),
-    start: composition
-      .slice(0, index)
-      .reduce((total, previous) => total + sliceLength(previous.value), 0),
-  }));
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const total = pieData.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <Card data-slot="soil-section">
       <CardHeader>
-        <CardTitle>Composição do Solo</CardTitle>
-
-        <CardDescription>Análise do Setor A-24</CardDescription>
+        <CardTitle>Distribuição de Cultivo</CardTitle>
       </CardHeader>
 
       <CardContent className="flex flex-col items-center gap-4">
-        {/* Anel */}
-
-        <div className="relative size-40">
-          <svg viewBox="0 0 176 176" className="size-full -rotate-90">
-            <circle
-              cx="88"
-              cy="88"
-              r={RADIUS}
-              fill="none"
-              className="stroke-muted"
-              strokeWidth="12"
-            />
-
-            {slices.map((slice) => (
-              <circle
-                key={slice.label}
-                cx="88"
-                cy="88"
-                r={RADIUS}
-                fill="none"
-                stroke={slice.color}
-                strokeWidth="12"
-                strokeDasharray={`${slice.length - GAP} ${CIRCUMFERENCE - slice.length + GAP}`}
-                strokeDashoffset={-slice.start}
-              />
-            ))}
-          </svg>
-
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-semibold text-primary">88%</span>
-
-            <span className="text-[11px] text-muted-foreground">Saudável</span>
-          </div>
-        </div>
-
-        {/* Legenda */}
+        <ProductivityPie hoveredIndex={hoveredIndex} onHoverChange={setHoveredIndex} />
 
         <dl className="flex w-full flex-col gap-2.5">
-          {composition.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-center justify-between text-sm"
-            >
-              <dt className="flex items-center gap-2 text-foreground-subtle">
-                <span
-                  className="size-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                  aria-hidden
-                />
-                {item.label}
-              </dt>
+          {pieData.map((item, index) => {
+            const percentage = total > 0 ? Math.round((item.value / total) * 100) : 0;
+            const isActive = hoveredIndex === index;
 
-              <dd className="font-medium text-foreground">{item.value}%</dd>
-            </div>
-          ))}
+            return (
+              <div
+                key={item.label}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className={cn(
+                  "flex cursor-default items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors",
+                  isActive && "bg-muted"
+                )}
+              >
+                <dt
+                  className={cn(
+                    "flex items-center gap-2 transition-colors",
+                    isActive ? "text-foreground" : "text-foreground-subtle"
+                  )}
+                >
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                    aria-hidden
+                  />
+                  {item.label}
+                </dt>
+
+                <dd
+                  className={cn(
+                    "font-medium transition-colors",
+                    isActive ? "text-foreground" : "text-foreground-subtle"
+                  )}
+                >
+                  {percentage}%
+                </dd>
+              </div>
+            );
+          })}
         </dl>
       </CardContent>
     </Card>
