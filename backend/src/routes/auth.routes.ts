@@ -9,6 +9,7 @@ const meController = new MeController();
 
 authRoutes.post('/register', (req, res) => authController.register(req, res));
 authRoutes.post('/login', (req, res) => authController.login(req, res));
+authRoutes.post('/logout', (req, res) => authController.logout(req, res));
 authRoutes.get('/me', authMiddleware, (req: Request, res: Response) => {
     meController.me(req, res);
 });

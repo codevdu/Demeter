@@ -26,8 +26,8 @@ const loginSchema = z.object({
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: true,
-  sameSite: 'strict' as const,
-  maxAge: 1000 * 60 * 60 * 2,
+  sameSite: 'none' as const,
+  maxAge: 1000 * 60 * 60 * 8,
 };
 
 export class AuthController {
@@ -74,5 +74,10 @@ export class AuthController {
 
       return res.status(401).json({ error: error.message || 'Erro ao realizar login.' });
     }
+  }
+
+  async logout(req: Request, res: Response) {
+    res.clearCookie('token', COOKIE_OPTIONS);
+    return res.status(200).json({ message: 'Logout realizado com sucesso.' });
   }
 }
