@@ -1,10 +1,10 @@
-import { ProdutorRestriction } from "@/components/auth/role.guard";
+import { GestorRestriction } from "@/components/auth/role.guard";
 import { GeoJsonMapTest } from "@/components/gestor/Map";
 import { Sidebar } from "@/components/produtor/Sidebar";
 
-export default function ProdutorMaps() {
+export default function GestorMaps() {
   return (
-    <ProdutorRestriction>
+    <GestorRestriction>
       <div className="theme-dashboard flex min-h-screen bg-background font-sans text-foreground">
         <Sidebar />
 
@@ -14,6 +14,6 @@ export default function ProdutorMaps() {
           </div>
         </main>
       </div>
-    </ProdutorRestriction>
+    </GestorRestriction>
   );
 }

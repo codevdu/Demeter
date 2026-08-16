@@ -19,9 +19,9 @@ import { useState } from "react";
 export default function ProdutorDashboard() {
 
   const [kpis, setKpis] = React.useState({
-  produtividade_media: 0,
-  variacao_producao: 0,
-  chuva_acumulada: 0,
+  produtividade_media: 20,
+  variacao_producao: 29.3,
+  chuva_acumulada: 120,
   });
 
   const [loading, setLoading] = React.useState(true);
@@ -86,7 +86,7 @@ export default function ProdutorDashboard() {
         <Sidebar />
 
         <main className="flex-1 overflow-y-auto p-8">
-          <div className="pb-8">
+          <div>
             <Topbar
               title="Visão Geral"
               onMunicipalityChange={setMunicipality}
