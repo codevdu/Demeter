@@ -1,11 +1,11 @@
-import { Sidebar } from '@/components/dashboard/sidebar'
-import { Topbar } from '@/components/dashboard/topbar'
-import { StatsGrid } from '@/components/dashboard/stat-card'
-import { RainfallProductivityChart } from '@/components/dashboard/rainfall-productivity-chart'
-import { TrafficByRegion } from '@/components/dashboard/traffic-by-region'
-import { MunicipalityTable } from '@/components/dashboard/municipality-table'
-import { Footer } from '@/components/dashboard/footer'
+import { Topbar } from '@/components/tecnico/topbar'
+import { StatsGrid } from '@/components/tecnico/stat-card'
+import { RainfallProductivityChart } from '@/components/tecnico/rainfall-productivity-chart'
+import { TrafficByRegion } from '@/components/tecnico/traffic-by-region'
+import { MunicipalityTable } from '@/components/tecnico/municipality-table'
+import { Footer } from '@/components/tecnico/footer'
 import { TecnicoRestriction } from '@/components/auth/role.guard'
+import { Sidebar } from '@/components/tecnico/Sidebar'
 
 const stats = [
 	{ label: 'Avg Rain (mm)', value: '124.5', change: 12 },
@@ -17,7 +17,7 @@ const stats = [
 export default function DashboardOverview() {
 	return (
 		<TecnicoRestriction>
-			<div className="flex min-h-screen bg-background">
+			<div className="theme-dashboard flex min-h-screen bg-background font-sans text-foreground">
 				<Sidebar />
 
 				<main className="flex-1 overflow-y-auto p-6">
