@@ -1,8 +1,8 @@
+// components/gestor/Map.tsx
 "use client";
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import type { GeoJsonObject, Feature, FeatureCollection, Geometry } from "geojson";
 
 import {
   Select,
@@ -14,14 +14,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
-import { getGeoJsonByUf } from "@/services/geojson-service";
 import { UF_CODIGO_IBGE } from "@/constants/geojson.urls";
-import {
-  CHOROPLETH_COLORS,
-  getQuantileBreaks,
-  getLegendLabels,
-  mockValueFromLabel,
-} from "@/types/choropleth";
+import { CHOROPLETH_COLORS, getLegendLabels } from "@/types/choropleth";
+import { useMunicipioProdutividade, TODOS_ESTADOS } from "@/hooks/use-produtivity";
 
 const MapInner = dynamic(() => import("./Mapinner"), {
   ssr: false,
@@ -34,135 +29,12 @@ const MapInner = dynamic(() => import("./Mapinner"), {
 
 const UFS = Object.keys(UF_CODIGO_IBGE);
 
-// Valor sentinela que representa "todos os estados" (opção padrão)
-export const TODOS_ESTADOS = "TODOS";
-
-// Faixa de produtividade usada para gerar o mock (sc/ha)
-const MOCK_MIN = 35;
-const MOCK_MAX = 95;
-
-function getFeatureName(feature: Feature<Geometry>): string {
-  return (
-    feature.properties?.name ??
-    feature.properties?.NOME ??
-    feature.properties?.NM_MUNICIP ??
-    "Município"
-  );
-}
-
-// Chave única por município: UF + nome, pra não colidir municípios
-// de mesmo nome em estados diferentes quando "Todos" está selecionado
-function getFeatureKey(feature: Feature<Geometry>): string {
-  const uf = feature.properties?.uf ?? "";
-  return `${uf}-${getFeatureName(feature)}`;
-}
-
-// Junta várias FeatureCollections (uma por UF) em uma só,
-// marcando cada feature com a UF de origem
-function mergeGeoJsonByUf(
-  collections: Array<{ uf: string; data: GeoJsonObject }>
-): FeatureCollection {
-  const features = collections.flatMap(({ uf, data }) => {
-    if (!data || !("features" in data)) return [];
-
-    const fc = data as FeatureCollection;
-    return fc.features.map((feature) => ({
-      ...feature,
-      properties: {
-        ...feature.properties,
-        uf,
-      },
-    }));
-  });
-
-  return { type: "FeatureCollection", features };
-}
+export { TODOS_ESTADOS };
 
 export function GeoJsonMapTest() {
   const [uf, setUf] = React.useState<string>(TODOS_ESTADOS);
-  const [geoData, setGeoData] = React.useState<GeoJsonObject | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-
-  // Cache simples em memória, evita refazer o fetch de todos os
-  // estados toda vez que o usuário volta pra opção "Todos"
-  const cacheRef = React.useRef<Record<string, GeoJsonObject>>({});
-
-  React.useEffect(() => {
-    let cancelado = false;
-
-    async function carregarGeoJson() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        if (uf === TODOS_ESTADOS) {
-          const resultados = await Promise.all(
-            UFS.map(async (sigla) => {
-              if (cacheRef.current[sigla]) {
-                return { uf: sigla, data: cacheRef.current[sigla] };
-              }
-              const data = (await getGeoJsonByUf(
-                sigla
-              )) as unknown as GeoJsonObject;
-              cacheRef.current[sigla] = data;
-              return { uf: sigla, data };
-            })
-          );
-
-          if (!cancelado) {
-            setGeoData(mergeGeoJsonByUf(resultados));
-          }
-        } else {
-          const data =
-            cacheRef.current[uf] ??
-            ((await getGeoJsonByUf(uf)) as unknown as GeoJsonObject);
-          cacheRef.current[uf] = data;
-
-          if (!cancelado) {
-            // marca a UF também no caso de estado único, pra manter
-            // a mesma chave (uf-nome) usada no restante do componente
-            setGeoData(mergeGeoJsonByUf([{ uf, data }]));
-          }
-        }
-      } catch (err) {
-        console.error("Erro ao carregar GeoJSON:", err);
-        if (!cancelado) {
-          setError("Não foi possível carregar o mapa.");
-          setGeoData(null);
-        }
-      } finally {
-        if (!cancelado) {
-          setLoading(false);
-        }
-      }
-    }
-
-    carregarGeoJson();
-
-    return () => {
-      cancelado = true;
-    };
-  }, [uf]);
-
-  const dataByMunicipio = React.useMemo(() => {
-    if (!geoData || !("features" in geoData)) return {};
-
-    const result: Record<string, number> = {};
-    const featureCollection = geoData as GeoJSON.FeatureCollection;
-
-    for (const feature of featureCollection.features) {
-      const key = getFeatureKey(feature as Feature<Geometry>);
-      result[key] = mockValueFromLabel(key, MOCK_MIN, MOCK_MAX);
-    }
-
-    return result;
-  }, [geoData]);
-
-  const breaks = React.useMemo(
-    () => getQuantileBreaks(Object.values(dataByMunicipio), 5),
-    [dataByMunicipio]
-  );
+  const { geoData, dataByMunicipio, breaks, loading, error } =
+    useMunicipioProdutividade(uf);
 
   const legendLabels = React.useMemo(
     () => getLegendLabels(breaks, " sc/ha"),
