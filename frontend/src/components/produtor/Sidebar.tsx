@@ -9,7 +9,6 @@ import {
   CircleHelp,
   Radio,
   Menu,
-  Map,
   MapPin,
   type LucideIcon,
 } from "lucide-react";
@@ -25,8 +24,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: "/produtor", label: "Visão Geral", icon: LayoutDashboard },
-  { href: "/produtor/mapas", label: "Mapas", icon: Map },
+  { href: "/produtor", label: "Visão Geral", icon: LayoutDashboard }
 ];
 
 const MUNICIPIO_COLORS = [
@@ -145,7 +143,7 @@ export function Sidebar() {
 
         {isOpen && loading && <MunicipioSkeleton />}
 
-        {isOpen && !loading && municipios.length > 0 && (
+        {isOpen && !loading && municipios.length > 1 && (
           <div className="flex flex-col gap-0.5">
             <p className="px-2.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Municípios
