@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   reactStrictMode: true,
   devIndicators: false,
@@ -12,6 +11,15 @@ const nextConfig: NextConfig = {
         hostname: "images.pexels.com",
       },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/login",
+        permanent: true,
+      },
+    ];
   },
 };
 
