@@ -3,7 +3,6 @@ import { AxiosError } from "axios";
 
 export type Profile = "PRODUTOR" | "TECNICO" | "GESTOR";
 
-// ---------- Registro ----------
 
 export interface RegisterPayload {
   email: string;
